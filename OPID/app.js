@@ -5,7 +5,7 @@ var server;
 if (desktop == true) {
     server = "http://localhost/msm/";
 } else {
-   // server = "https://myopid.apphb.com/";
+   // server = "https://opid.apphb.com/";
     server = "";
 }
 
