@@ -1,0 +1,96 @@
+﻿ <div>
+
+    <fieldset>
+        <legend>Research Files</legend>
+        <table style="width:100%;">
+            <tr>
+                <td>Interview Research File</td>
+                <td>
+                    <input type="file" ng-model="APUploadedFile" onchange="angular.element(this).scope().setFiles('AP', this)" />
+                </td>
+                <td>
+                    <input type="button" value="Upload" ng-click="APUpload();" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Uploaded File
+                </td>
+                <td>{{APUploadedFile}}</td>
+            </tr>
+            <tr><td>&nbsp;</td></tr>
+            <tr>
+                <td>Modifications Research File</td>
+                <td>
+                    <input type="file" ng-model="MDUploadedFile" onchange="angular.element(this).scope().setFiles('MD', this)" />
+                </td>
+                <td>
+                    <input type="button" value="Upload" ng-click="MDUpload();" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Uploaded File
+                </td>
+                <td>{{MDUploadedFile}}</td>
+        </table>
+    </fieldset>
+    <br/><br/><br/>
+    <fieldset>
+        <legend>Disposition Files</legend>
+    <table style="width:100%;">
+        <tr>
+            <td>Voided Checks File</td>
+            <td>
+                <input type="file" ng-model="VCUploadedFile" onchange="angular.element(this).scope().setFiles('VC', this)" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="VCUpload();" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{VCUploadedFile}}</td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+      
+        <tr>
+            <td>Quickbooks File</td>
+            <td>
+                <input type="file" ng-model="QBUploadedFile" onchange="angular.element(this).scope().setFiles('QB', this);" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="QBUpload();" />
+            </td>
+
+        </tr>
+
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{QBUploadedFile}}</td>
+        </tr>
+      </table>
+    </fieldset>
+    <br/><br/><br/>
+    <table width="100%">
+        <tr>
+            <td>
+                <input type="button" value="Merge" ng-click="Merge()" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>Merge status:</td>
+            <td>&nbsp;</td>
+            <td>{{mergeStatus}}</td>
+        </tr> 
+    </table>
+</div>  
+
+
+ 

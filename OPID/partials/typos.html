@@ -1,0 +1,20 @@
+﻿ 
+
+
+<table style="width:100%;border:solid;">
+    <tr>
+        <td>
+            <div ng-controller="datatableController as myTable">
+                <div ng-show="pleaseAct">
+                    There are no typo checks to display.
+                </div>
+                <div ng-hide="pleaseAct">
+                      <table datatable="" dt-options="myTable.dtOptions" dt-columns="myTable.dtColumns" class="table table-striped table-bordered"></table>
+                </div>
+            </div>
+        </td>
+    </tr>
+
+    <tr><td>&nbsp;</td></tr>
+  
+</table>

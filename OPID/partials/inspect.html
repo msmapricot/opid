@@ -1,0 +1,32 @@
+﻿<div ng-controller="inspectController as vm">
+    <table>
+        <tr>
+            <td>Select file to inspect:</td>
+            <td>&nbsp;&nbsp;</td>
+            <td>
+                <select ng-model="vm.selectedFile" ng-change="vm.changedValue(vm.selectedFile)">
+                    <option ng-repeat="x in vm.menuFiles" value="{{x.type}}">{{x.file}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+    </table>
+</div>
+
+ 
+    <table style="width:100%;border:solid;">
+        <tr>
+            <td>
+                <div ng-controller="datatableController as myTable">
+                    <div ng-show="pleaseAct">
+                        Please select a file to inspect from the dropdown menu.
+                    </div>
+                    <div ng-hide="pleaseAct">
+                      <table datatable="" dt-options="myTable.dtOptions" dt-columns="myTable.dtColumns" class="table table-striped table-bordered"></table>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+

@@ -1,0 +1,37 @@
+﻿ <div>
+    <table style="width:100%;border:solid;">
+        <tr>
+            <td>Select File</td>
+            <td>
+                <input type="file" ng-model-instant id="fileToUpload" onchange="angular.element(this).scope().setFiles(this)" />
+            </td>
+        </tr>
+        <tr>
+            <td>File Size</td>
+            <td>
+                <div ng-repeat="file in files.slice(0)">
+                    <span ng-switch="file.size > 1024*1024">
+                        <span ng-switch-when="true">{{file.size / 1024 / 1024 | number:2}} MB</span>
+                        <span ng-switch-default>{{file.size / 1024 | number:2}} kB</span>
+                    </span>
+                </div>
+            </td>
+        </tr>
+        
+        <tr>
+            <td>
+                File Upload Status
+            </td>
+            <td>{{UploadStatus}}</td>
+        </tr>
+        
+        <tr>
+            <td>
+                <input type="button" value="Upload" ng-click="fnUpload();" />
+            </td>
+            <td>
+                <input type="button" value="DownLoad" ng-click="fnDownLoad();" />
+            </td>
+        </tr>
+    </table>
+</div>  

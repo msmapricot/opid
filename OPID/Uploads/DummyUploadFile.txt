@@ -1,0 +1,2 @@
+﻿This is a dummy file. It forces the Uploads folder to be built at AppHarbor. It was
+re-added on 1/19/2017 after mysteriously disappearing.

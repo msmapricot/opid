@@ -1,0 +1,37 @@
+﻿ 
+
+
+<table style="width:100%;border:solid;">
+    <tr>
+        <td>
+            <div ng-controller="datatableController as myTable">
+                <div ng-show="pleaseAct">
+                    There are no resolved checks to display.
+                </div>
+                <div ng-hide="pleaseAct">
+                      <table datatable="" dt-options="myTable.dtOptions" dt-columns="myTable.dtColumns" class="table table-striped table-bordered"></table>
+                </div>
+            </div>
+        </td>
+    </tr>
+
+    <tr><td>&nbsp;</td></tr>
+
+    <tr>
+        <td>
+            <input type="button" value="Download interview importme file" ng-click="InterviewDownload()" />
+        </td>
+        
+       
+    </tr>
+
+    <tr><td>&nbsp;</td></tr>
+
+    <tr>
+        <td>
+            <input type="button" value="Download modifications importme file" ng-click="ModificationsDownload()" />
+        </td>
+    </tr>
+
+  
+</table>
