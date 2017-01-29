@@ -145,6 +145,7 @@ namespace MSM
                 defaults: new { controller = "Resolved", action="HaveResolvedChecks" }
             );
 
+          // Frr testing with Postman
           config.Routes.MapHttpRoute(
             name: "ConnectionString",
             routeTemplate: "api/cs/{id}",
