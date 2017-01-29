@@ -18,7 +18,7 @@ namespace MSM.Controllers
             // Set timestamp when researchController is loaded. This allows
             // the timestamp to be made part of the page title, which allows
             // the timestamp to appear in the printed file and also as part
-            // of the Excel file name of the angular datatable.
+            // of the Excel file name of the Angular datatable.
 
             // This compensates for the fact that DateTime.Now on the AppHarbor server returns
             // the the time in the timezone of the server.
