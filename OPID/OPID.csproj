@@ -399,9 +399,6 @@
     <Content Include="Web.Peter.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <None Include="Web.Production.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
