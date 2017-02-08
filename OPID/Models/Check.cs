@@ -26,5 +26,7 @@ namespace MSM.Models
         public int InterviewRecordID { get; set; }
 
         public bool Matched { get; set; }
+
+        public bool Stale { get; set; }
     }
 }

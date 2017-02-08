@@ -5,7 +5,7 @@ MSMApp.controller('resolvedController', ['$rootScope', '$scope', '$http', '$wind
            
             $scope.tab = 'resolved';
 
-            var timestampPromise = FileManager.getResolvedTimestamp();
+            var timestampPromise = FileManager.getDownloadTimestamp();
 
             timestampPromise.then(function (d) {
                 // Example: d = ""22-Nov-2016-0941""

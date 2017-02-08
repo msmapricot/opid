@@ -25,6 +25,13 @@ namespace MSM.Controllers
         }
 
         [HttpGet]
+        public void MarkStaleChecks(string type)
+        {
+            DataManager.MarkStaleChecks(type);
+        }
+
+        /*
+        [HttpGet]
         public string GetTimestamp()
         {
             // Set timestamp when researchController is loaded. This allows
@@ -42,5 +49,6 @@ namespace MSM.Controllers
            
             return cst.ToString("dd-MMM-yyyy-hhmm"); 
         }
+        */
     }
 }

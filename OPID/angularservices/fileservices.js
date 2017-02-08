@@ -7,6 +7,12 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         })
     };
 
+    var getDownloadStaleChecks = function (fileName, fileType) {
+        return $http.get(server + "api/downloadstalechecks", { params: { "fileName": fileName, "fileType": fileType } }).then(function (result) {
+            return result.data;
+        })
+    };
+
     var uploadedFiles = {};
     var menuFiles = [];
 
@@ -180,9 +186,9 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         })
     }
 
-    var getResolvedTimestamp = function()
+    var getDownloadTimestamp = function()
     {
-       return $http.get(server + "api/resolvedtimestamp").then(function (result) {
+       return $http.get(server + "api/downloadtimestamp").then(function (result) {
             return result.data;
         })
     }
@@ -195,6 +201,7 @@ FileServices.factory('FileManager', ['$http', function ($http) {
     
     return {
         getDownloadFile: getDownloadFile,
+        getDownloadStaleChecks : getDownloadStaleChecks,
 
         getQBFileName: getQBFileName,
         setQBFileName: setQBFileName,
@@ -222,7 +229,7 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         getValidFile: getValidFile,
 
         getTyposTimestamp: getTyposTimestamp,
-        getResolvedTimestamp: getResolvedTimestamp,
+        getDownloadTimestamp: getDownloadTimestamp,
         getResearchTimestamp: getResearchTimestamp 
     };
 }]);

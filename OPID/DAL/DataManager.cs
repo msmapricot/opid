@@ -260,6 +260,36 @@ namespace MSM.DAL
             }
         }
 
+        private static bool IsStale(int cnum, List<Check> staleChecks)
+        {
+            var staleCheck = (staleChecks.Find(check => check.Num == cnum));
+
+            return staleCheck != null;
+        }
+
+        public static void MarkStaleChecks(string type)
+        {
+            List<Check> staleChecks = GetStaleChecks();
+ 
+            using (var dbCtx = new MSMEntities())
+            {
+                var longUnmatched = dbCtx.Set<ResearchCheck>();
+
+                foreach (ResearchCheck lu in longUnmatched)
+                {
+                    if ((type.Equals("interview") && lu.Num > 0) || (type.Equals("modification") && lu.Num < 0))
+                    {
+                        if (IsStale(lu.Num, staleChecks))
+                        {
+                            lu.Stale = true;
+                        }
+                    }
+                }
+
+                dbCtx.SaveChanges();
+            }
+        }
+
         public static void RemoveTypoChecks()
         {
             MarkTypoChecks();
@@ -688,7 +718,7 @@ namespace MSM.DAL
         // Called only by FileDownloaderController.DownloadImportMe
         public static List<ImportRow> GetImportRows()
         {
-             List<ImportRow> importRows = new List<ImportRow>();
+            List<ImportRow> importRows = new List<ImportRow>();
 
             // Each resolved check creates a new import row or updates an existing one.
             foreach (Check resolvedCheck in resolvedChecks)
@@ -755,7 +785,7 @@ namespace MSM.DAL
         private static ImportRow NewImportRow(Check resolvedCheck, string disposition)
         {
             ImportRow importRow = new ImportRow
-            {         
+            {
                 RecordID = resolvedCheck.RecordID,
                 InterviewRecordID = resolvedCheck.InterviewRecordID,
                 LBVDCheckNum = (resolvedCheck.Service.Equals("LBVD") ? resolvedCheck.Num : 0),
@@ -771,6 +801,88 @@ namespace MSM.DAL
             };
 
             return importRow;
+        }
+
+        public static List<Check> GetStaleChecks()
+        {
+            DateTime today = DateTime.Now;
+
+            List<Check> staleChecks = new List<Check>();
+
+            List<Check> researchChecks = GetResearchChecks();
+
+            foreach (Check check in researchChecks)
+            {
+                TimeSpan elapsed = today.Subtract(check.Date);
+
+                if (elapsed.TotalDays > 30 && check.Stale != true) // don't return a check already marked stale
+                {
+                    staleChecks.Add(check);
+                }
+            }
+
+            return staleChecks;
+        } 
+
+        public static List<ImportRow> GetStaleRows(List <Check> staleChecks)
+        {
+            List<ImportRow> importRows = new List<ImportRow>();
+
+            // Each stale check creates a new import row or updates an existing one.
+            foreach (Check staleCheck in staleChecks)
+            {
+                List<ImportRow> irows = (from irow in importRows
+                                         where irow.LBVDCheckNum == staleCheck.Num
+                                               || irow.TIDCheckNum == staleCheck.Num
+                                               || irow.TDLCheckNum == staleCheck.Num
+                                               || irow.MBVDCheckNum == staleCheck.Num
+                                               || irow.SDCheckNum == staleCheck.Num
+
+                                               // Does resolvedCheck match an existing importRow by ID?
+                                               // This is the case where there is more than one check on an import row, IR, 
+                                               // and resolvedCheck will be used to update row IR.
+                                               || (staleCheck.InterviewRecordID != 0 && irow.InterviewRecordID == staleCheck.InterviewRecordID)
+                                               || (staleCheck.RecordID != 0 && irow.RecordID == staleCheck.RecordID)
+                                         select irow).ToList();
+
+                if (irows.Count() == 0)
+                {
+                    // There is no import row representing this resolved check.
+                    // Create one.
+                    importRows.Add(NewImportRow(staleCheck, "Stale Check"));
+                }
+                else
+                {
+                    bool added = false;
+
+                    foreach (ImportRow irow in irows)
+                    {
+                        if ((staleCheck.InterviewRecordID != 0 && staleCheck.InterviewRecordID != irow.InterviewRecordID)
+                            ||
+                            (staleCheck.RecordID != 0 && staleCheck.RecordID != irow.RecordID))
+                        {
+                            // Case of same check number being used for multiple
+                            // birth certificates.
+
+                            if (!added)
+                            {
+                                importRows.Add(NewImportRow(staleCheck, "Stale Check"));
+                                // Prevent the same resolved check from being added twice.
+                                added = true;
+                            }
+                        }
+                        else
+                        {
+                            // Found row among existing import rows. There is more than one check
+                            // number on this row. In other words, the client had more than
+                            // one check written for the visit this row corresponds to.
+                            UpdateExistingImportRow(staleCheck, "Stale Check", irow);
+                        }
+                    }
+                }
+            }
+
+            return importRows;
         }
 
         public static List<Check> GetResearchChecks()
@@ -791,7 +903,8 @@ namespace MSM.DAL
                         Name = lu.Name,
                         Date = lu.Date,
                         Service = lu.Service,
-                        Matched = lu.Matched
+                        Matched = lu.Matched,
+                        Stale = lu.Stale
                     });
                 }
             }
@@ -822,7 +935,8 @@ namespace MSM.DAL
                             Name = check.Name,
                             Date = check.Date,
                             Service = check.Service,
-                            Matched = false
+                            Matched = false,
+                            Stale = false
                         };
 
                         longUnmatched.Add(unm);

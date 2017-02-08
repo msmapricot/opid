@@ -84,16 +84,18 @@ namespace MSM
                   );
 
             config.Routes.MapHttpRoute(
-                  name: "ResolvedTimestamp",
-                  routeTemplate: "api/resolvedtimestamp",
+                  name: "DownloadTimestamp",
+                  routeTemplate: "api/downloadtimestamp",
                   defaults: new { controller = "FileDownloader", action = "GetTimestamp" }
                );
 
+          /*
           config.Routes.MapHttpRoute(
                    name: "ResearchTimestamp",
                    routeTemplate: "api/researchtimestamp",
                    defaults: new { controller = "Research", action = "GetTimestamp" }
                 );
+         */
 
           config.Routes.MapHttpRoute(
                name: "Unmatched",
@@ -127,11 +129,30 @@ namespace MSM
                  defaults: new {  controller = "FileDownloader", action="DownloadImportMe"} 
              );
 
+            // For PostMan testing only
+            config.Routes.MapHttpRoute(
+              name: "GetStaleImportRows",
+              routeTemplate: "api/getstaleimportrows",
+              defaults: new { controller = "FileDownloader", action = "GetStaleImportRows" }
+          );
+
+            config.Routes.MapHttpRoute(
+               name: "DownloadStaleChecks",
+               routeTemplate: "api/downloadstalechecks",
+               defaults: new { controller = "FileDownloader", action = "DownloadStaleChecks" }
+           );
+
             config.Routes.MapHttpRoute(
                    name: "Resolve",
                    routeTemplate: "api/resolvecheck/{checkNum}",
                    defaults: new { controller = "Research", action = "ResolveCheck" }
                );
+
+            config.Routes.MapHttpRoute(
+                  name: "MarkStaleChecks",
+                  routeTemplate: "api/markstalechecks/{type}",
+                  defaults: new { controller = "Research", action = "MarkStaleChecks" }
+                );
 
           config.Routes.MapHttpRoute(
                name: "ValidFile",

@@ -6,6 +6,10 @@ ResearchServices.factory('ResearchManager', ['$http', function ($http) {
         });
     };
 
+    var markStaleChecks = function (type) {
+        return $http.get(server + "api/markstalechecks/" + type);
+    }
+
     var resolvedStatus = "";
 
     var getResolvedStatus = function()
@@ -21,6 +25,7 @@ ResearchServices.factory('ResearchManager', ['$http', function ($http) {
     return {
         resolve: resolve,
         getResolvedStatus: getResolvedStatus,
-        setResolvedStatus: setResolvedStatus,    
+        setResolvedStatus: setResolvedStatus,
+        markStaleChecks: markStaleChecks
     };
 }]);

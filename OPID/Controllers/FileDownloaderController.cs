@@ -69,9 +69,10 @@ namespace MSM.Controllers
         {
             if (importRows != null)
             {
-                PrepareInterviewImportFile(importRows);
-
+                // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
                 string fname = string.Format("interview-importme-{0}", timestamp);
+                PrepareInterviewImportFile(fname, importRows);
+
                 string filePath = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
 
                 return DownloadSpecifiedImportMe(fname, filePath);
@@ -84,9 +85,10 @@ namespace MSM.Controllers
         {
             if (importRows != null)
             {
-                PrepareModificationsImportFile(importRows);
-
+                // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
                 string fname = string.Format("modifications-importme-{0}", timestamp);
+                PrepareModificationsImportFile(fname, importRows);
+
                 string filePath = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
 
                 return DownloadSpecifiedImportMe(fname, filePath);
@@ -95,12 +97,75 @@ namespace MSM.Controllers
             return null;
         }
 
-        private static void PrepareInterviewImportFile(List<ImportRow> updatedRows)
+        [HttpGet]
+        // For PostMan testing only.
+        public List<ImportRow> GetStaleImportRows()
+        {
+            List<Check> staleChecks = DataManager.GetStaleChecks();
+
+            List<ImportRow> importRows = DataManager.GetStaleRows(staleChecks);
+
+            return importRows;
+        }
+
+        [HttpGet]
+        public HttpResponseMessage DownloadStaleChecks(string fileName, string fileType)
+        {
+            List<Check> staleChecks = DataManager.GetStaleChecks();
+
+            List<ImportRow> importRows = DataManager.GetStaleRows(staleChecks);
+
+            switch (fileName)
+            {
+                case "interviewstale":
+                    return DownloadInterviewStaleChecks(importRows);
+
+                case "modificationsstale":
+                    return DownloadModificationsStaleChecks(importRows);
+
+                default:
+                    return null;
+            }
+        }
+
+        public HttpResponseMessage DownloadInterviewStaleChecks(List<ImportRow> importRows)
+        {
+            if (importRows != null)
+            {
+                // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
+                string fname = string.Format("interview-stalechecks-{0}", timestamp);
+                PrepareInterviewImportFile(fname, importRows);
+
+                string filePath = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
+
+                return DownloadSpecifiedImportMe(fname, filePath);
+            }
+
+            return null;
+        }
+
+        public HttpResponseMessage DownloadModificationsStaleChecks(List<ImportRow> importRows)
+        {
+            if (importRows != null)
+            {
+                // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
+                string fname = string.Format("modifications-stalechecks-{0}", timestamp);
+                PrepareModificationsImportFile(fname, importRows);
+
+                string filePath = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
+
+                return DownloadSpecifiedImportMe(fname, filePath);
+            }
+
+            return null;
+        }
+
+        private static void PrepareInterviewImportFile(string fname, List<ImportRow> updatedRows)
         {
             var csv = new StringBuilder();
 
             string pathToDispositionHeader = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/App_Data/Interview Import Me Header.csv"));
-            
+
             using (StreamReader reader = new StreamReader(pathToDispositionHeader))
             {
                 string header = reader.ReadToEnd();
@@ -129,18 +194,17 @@ namespace MSM.Controllers
                 }
             }
 
-            // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
-            string pathToImportMeFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/interview-importme-{0}.csv", timestamp));
+           
+            string pathToImportMeFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
 
             File.WriteAllText(pathToImportMeFile, csv.ToString());
         }
  
-        private static void PrepareModificationsImportFile(List<ImportRow> updatedRows)
+        private static void PrepareModificationsImportFile(string fname, List<ImportRow> updatedRows)
         {
             var csv = new StringBuilder();
 
-            // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
-            string pathToModificationsHeader = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/App_Data/Modifications Import Me Header.csv", timestamp));
+            string pathToModificationsHeader = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/App_Data/Modifications Import Me Header.csv"));
 
             using (StreamReader reader = new StreamReader(pathToModificationsHeader))
             {
@@ -171,8 +235,9 @@ namespace MSM.Controllers
             }
 
             // Static variable timestamp will be set by this point, because GetTimestamp will have been called.
-            string pathToImportMeFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/modifications-importme-{0}.csv", timestamp));
+         //   string pathToImportMeFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/modifications-importme-{0}.csv", timestamp));
 
+            string pathToImportMeFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Downloads/{0}.csv", fname));
             File.WriteAllText(pathToImportMeFile, csv.ToString());
         }
 
