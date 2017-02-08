@@ -30,7 +30,6 @@ namespace MSM.Controllers
             DataManager.MarkStaleChecks(type);
         }
 
-        /*
         [HttpGet]
         public string GetTimestamp()
         {
@@ -49,6 +48,5 @@ namespace MSM.Controllers
            
             return cst.ToString("dd-MMM-yyyy-hhmm"); 
         }
-        */
     }
 }
