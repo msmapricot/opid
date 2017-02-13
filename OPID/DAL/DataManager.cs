@@ -691,24 +691,39 @@ namespace MSM.DAL
             switch (resolvedCheck.Service)
             {
                 case "LBVD":
-                    irow.LBVDCheckNum = checkNum;
-                    irow.LBVDCheckDisposition = disposition;
+                    if (irow.LBVDCheckNum == 0)
+                    {
+                        irow.LBVDCheckNum = checkNum;
+                        irow.LBVDCheckDisposition = disposition;
+                    }
                     break;
                 case "TID":
-                    irow.TIDCheckNum = checkNum;
-                    irow.TIDCheckDisposition = disposition;
+                    if (irow.TIDCheckNum == 0)
+                    {
+                        irow.TIDCheckNum = checkNum;
+                        irow.TIDCheckDisposition = disposition;
+                    }
                     break;
                 case "TDL":
-                    irow.TDLCheckNum = checkNum;
-                    irow.TDLCheckDisposition = disposition;
+                    if (irow.TDLCheckNum == 0)
+                    {
+                        irow.TDLCheckNum = checkNum;
+                        irow.TDLCheckDisposition = disposition;
+                    }
                     break;
                 case "MBVD":
-                    irow.MBVDCheckNum = checkNum;
-                    irow.MBVDCheckDisposition = disposition;
+                    if (irow.MBVDCheckNum == 0)
+                    {
+                        irow.MBVDCheckNum = checkNum;
+                        irow.MBVDCheckDisposition = disposition;
+                    }
                     break;
                 case "SD":
-                    irow.SDCheckNum = checkNum;
-                    irow.SDCheckDisposition = disposition;
+                    if (irow.SDCheckNum == 0)
+                    {
+                        irow.SDCheckNum = checkNum;
+                        irow.SDCheckDisposition = disposition;
+                    }
                     break;
                 default:
                     break;
@@ -753,13 +768,14 @@ namespace MSM.DAL
 
                         foreach (ImportRow irow in irows)
                         {
-                            if ((resolvedCheck.InterviewRecordID != 0 && resolvedCheck.InterviewRecordID != irow.InterviewRecordID)
+                            if ((resolvedCheck.Service == "LBVD" || resolvedCheck.Service == "MBVD")
+                                &&
+                                ((resolvedCheck.InterviewRecordID != 0 && resolvedCheck.InterviewRecordID != irow.InterviewRecordID)
                                 ||
-                                (resolvedCheck.RecordID != 0 && resolvedCheck.RecordID != irow.RecordID))
+                                (resolvedCheck.RecordID != 0 && resolvedCheck.RecordID != irow.RecordID)))
                             {
                                 // Case of same check number being used for multiple
                                 // birth certificates.
-
                                 if (!added)
                                 {
                                     importRows.Add(NewImportRow(resolvedCheck, disposition));
@@ -857,13 +873,14 @@ namespace MSM.DAL
 
                     foreach (ImportRow irow in irows)
                     {
-                        if ((staleCheck.InterviewRecordID != 0 && staleCheck.InterviewRecordID != irow.InterviewRecordID)
+                        if ((staleCheck.Service == "LBVD" || staleCheck.Service == "MBVD")
+                            &&
+                            ((staleCheck.InterviewRecordID != 0 && staleCheck.InterviewRecordID != irow.InterviewRecordID)
                             ||
-                            (staleCheck.RecordID != 0 && staleCheck.RecordID != irow.RecordID))
+                            (staleCheck.RecordID != 0 && staleCheck.RecordID != irow.RecordID)))
                         {
                             // Case of same check number being used for multiple
                             // birth certificates.
-
                             if (!added)
                             {
                                 importRows.Add(NewImportRow(staleCheck, "Stale Check"));
