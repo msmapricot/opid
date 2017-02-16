@@ -1,4 +1,4 @@
-﻿ 
+﻿
 
 <table style="width:100%;border:solid;">
     <tr>
@@ -8,23 +8,23 @@
             </div>
         </td>
     </tr>
-   
+
 </table>
 
-<br/><br/>
+<br /><br />
 <p>Enter a check number in the box below and then click the Resolve Check button to manually remove the check from the research table.</p>
- <table>
+<table>
     <tr>
-       <td>
-          <input type="number" ng-model="resolvedCheck" name="resolvedCheck" ng-pattern="integerval" required />
-          <span ng-show="form.resolvedCheck.$invalid">Please enter an integer value</span>
-       </td>
+        <td>
+            <input type="number" ng-model="resolvedCheck" name="resolvedCheck" ng-pattern="integerval" required />
+            <span ng-show="form.resolvedCheck.$invalid">Please enter an integer value</span>
+        </td>
     </tr>
-     <tr><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td></tr>
     <tr>
-      <td><input type="button" value="Resolve Check" ng-click="ResolveCheck();" /></td>
+        <td><input type="button" value="Resolve Check" ng-click="ResolveCheck();" /></td>
     </tr>
-     <tr><td>&nbsp;</td></tr>
+    <tr><td>&nbsp;</td></tr>
 </table>
 <div><span ng-bind-html="ResolvedStatus"></span></div>
 
@@ -47,4 +47,40 @@
         </td>
     </tr>
 </table>
- 
+<br/><br/><br/>
+<fieldset>
+    <legend>Restore from Backup</legend>
+    <table style="width:100%;">
+        <tr>
+            <td>Research Table</td>
+            <td>
+                <input type="file" ng-model="RTUploadedFile" onchange="angular.element(this).scope().setFiles('RT', this)" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="RTUpload();" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{RTUploadedFile}}</td>
+        </tr>
+    </table>
+</fieldset>
+
+<br /><br /><br />
+
+<table width="100%">
+    <tr>
+        <td>
+            <input type="button" value="Restore from Backup" ng-click="RestoreFromBackup()" />
+        </td>
+    </tr>
+
+    <tr>
+        <td>Restoration status:</td>
+        <td>&nbsp;</td>
+        <td>{{restorationStatus}}</td>
+    </tr>
+</table>

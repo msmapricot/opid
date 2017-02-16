@@ -69,6 +69,8 @@ namespace MSM.Controllers
                     return ValidateMDFile(fpath);
                 case "QB":
                     return ValidateQBFile(fpath);
+                case "RT":  // Research Table
+                    return ValidateRTFile(fpath);
                 default:
                     return false;
             }
@@ -162,6 +164,11 @@ namespace MSM.Controllers
             }
 
             return valid;
+        }
+
+        private bool ValidateRTFile(string fpath)
+        {
+            return true;
         }
     }   
 }

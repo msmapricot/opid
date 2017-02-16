@@ -19,6 +19,12 @@ namespace MSM.Controllers
         }
 
         [HttpGet]
+        public void RestoreResearchTable(string rtFileName, string rtFileType)
+        {
+            DataManager.RestoreResearchTable(rtFileName, rtFileType);
+        }
+
+        [HttpGet]
         public string ResolveCheck(int checkNum)
         {
             return DataManager.ResolveCheck(checkNum);

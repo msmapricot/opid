@@ -999,6 +999,17 @@ namespace MSM.DAL
                 return status;
             }
         }
+
+        public static void RestoreResearchTable(string rtFileName, string rtFileType)
+        {
+            string pathToResearchTableFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", rtFileName, rtFileType));
+
+            List<ResearchCheck> resChecks = ExcelDataReader.GetResearchChecks(pathToResearchTableFile);
+
+            int z;
+
+            z = 2;
+        }
     }
 }
  

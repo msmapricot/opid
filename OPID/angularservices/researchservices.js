@@ -22,10 +22,24 @@ ResearchServices.factory('ResearchManager', ['$http', function ($http) {
         resolvedStatus = r;
     }
 
+    var restoreResearchTable = function (rtFileName, rtFileType) {
+        return $http.get(server + "api/restore",
+            {
+                params:
+                    {
+                        "rtFileName": rtFileName,
+                        "rtFileType": rtFileType
+                    }
+            }).then(function (result) {
+                return result.data;
+            });
+    };
+
     return {
         resolve: resolve,
         getResolvedStatus: getResolvedStatus,
         setResolvedStatus: setResolvedStatus,
-        markStaleChecks: markStaleChecks
+        markStaleChecks: markStaleChecks,
+        restore: restoreResearchTable
     };
 }]);

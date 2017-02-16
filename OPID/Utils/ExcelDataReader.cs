@@ -119,6 +119,22 @@ namespace MSM.Utils
             return voidedChecks;
         }
 
+        public static List<ResearchCheck> GetResearchChecks(string filePath)
+        {
+            List<ResearchCheck> resChecks = new ExcelData(filePath).GetData().Select(dataRow => new ResearchCheck
+            {
+                Date = Convert.ToDateTime(dataRow["Date"].ToString()),
+                RecordID = Convert.ToInt32(dataRow["Record ID"].ToString()),
+                InterviewRecordID = Convert.ToInt32(dataRow["Interview Record ID"].ToString()),
+                Stale = Convert.ToBoolean(dataRow["Stale"]),
+                Name = dataRow["Name"].ToString(),
+                Num = Convert.ToInt32(dataRow["Check Number"].ToString()),
+                Service = dataRow["Service"].ToString()
+            }).ToList();
+
+            return resChecks;
+        }
+
         public static List<EmptyCol> GetEmptyFile(string filePath)
         {
             List<EmptyCol> emptyCols = new ExcelData(filePath).GetData().Select(dataRow =>

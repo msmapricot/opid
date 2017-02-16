@@ -103,8 +103,14 @@ namespace MSM
                defaults: new { controller = "Research", action="GetResearchChecks" }
             );
 
-          // Test using Postman
           config.Routes.MapHttpRoute(
+                  name: "Restore",
+                  routeTemplate: "api/restore",
+                  defaults: new { controller = "Research", action = "RestoreResearchTable" }
+               );
+
+            // Test using Postman
+            config.Routes.MapHttpRoute(
                     name: "UploadPath",
                     routeTemplate: "api/uploadpath",
                     defaults: new { controller = "FileUploader", action="UploadPath" }

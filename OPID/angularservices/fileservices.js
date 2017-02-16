@@ -70,6 +70,19 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         }
     }
 
+    var setRTUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var rtUploaded = uploadedFiles.rtFileName;
+
+        if (rtUploaded == undefined || rtUploaded != fname) {
+            uploadedFiles.rtFileName = fname;
+            uploadedFiles.rtFileType = ftype;
+            addToMenuFiles("Restore", fname, ftype);
+        }
+    }
+
     var setMDUploadFile = function (fileObj) {
         var fparts = fileObj.name.split(".");
         var fname = fparts[0];
@@ -119,6 +132,25 @@ FileServices.factory('FileManager', ['$http', function ($http) {
             return "";
         }
         return uploadedFiles.apFileType;
+    }
+
+    var getRTFileName = function () {
+        if (uploadedFiles.rtFileName == undefined) {
+            return "unknown";
+        };
+
+        return uploadedFiles.rtFileName;
+    }
+
+    var setRTFileName = function (name) {
+        uploadedFiles.rtFileName = name;
+    }
+
+    var getRTFileType = function () {
+        if (uploadedFiles.rtFileType == undefined) {
+            return "";
+        }
+        return uploadedFiles.rtFileType;
     }
 
     var getMDFileName = function () {
@@ -230,7 +262,12 @@ FileServices.factory('FileManager', ['$http', function ($http) {
 
         getTyposTimestamp: getTyposTimestamp,
         getDownloadTimestamp: getDownloadTimestamp,
-        getResearchTimestamp: getResearchTimestamp 
+        getResearchTimestamp: getResearchTimestamp,
+
+        getRTFileName: getRTFileName,
+        getRTFileType: getRTFileType,
+        setRTFileName: setRTFileName,
+        setRTUploadFile: setRTUploadFile
     };
 }]);
 

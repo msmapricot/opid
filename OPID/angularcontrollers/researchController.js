@@ -3,6 +3,7 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
         function ($rootScope, $scope, $http, $window, $route, FileManager, ResearchManager, DTOptionsBuilder, DTColumnBuilder) {
             $scope.tab = 'research';
 
+
             var timestampPromise = FileManager.getDownloadTimestamp();
 
             timestampPromise.then(function (d) {
@@ -13,6 +14,9 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
                 $scope.timestamp = d.substr(1, 16);
 
                 $rootScope.pageTitle = "Research " + $scope.timestamp;
+                $scope.mergeStatus = "";
+                $scope.files = [];
+                $scope.RTUploadedFile = FileManager.getRTFileName() + "." + FileManager.getRTFileType();
             })
 
             $scope.integerval = /^-?\d*$/;
@@ -101,5 +105,86 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
 
                     downloadLink.click();
                 })
+            }
+
+            $scope.RTUpload = function () {
+                var fd = new FormData()
+                for (var i in $scope.files) {
+                    // i as an arry index
+                    if ($scope.files[i].ftype == 'RT') {
+                        fd.append("uploadedFile", $scope.files[i].file);
+                        fd.append("ftype", "RT");
+                        var xhr = new XMLHttpRequest();
+                        xhr.addEventListener("load", RTUploadComplete, false);
+                        xhr.open("POST", server + "api/upload/UploadFile", true);
+                        $scope.progressVisible = true;
+                        xhr.send(fd);
+                    }
+                }
+            }
+
+            function RTUploadComplete(evt) {
+                $scope.progressVisible = false;
+                if (evt.target.status == 201) {
+                    $scope.FilePath = evt.target.responseText;
+
+                    $scope.$apply(function (scpe) {
+                        $scope.RTUploadStatus = "Upload Complete";
+                        for (var i in $scope.files) {
+                            var jsonObj = $scope.files[i];
+                            if (jsonObj.ftype == 'RT' & jsonObj.seen == "false") {
+                                FileManager.getValidFile('RT', jsonObj.file).then(function (v) {
+                                    jsonObj.seen = "true";
+                                    $scope.RTUploadedFile = jsonObj.file.name;  // this includes the extension
+
+                                    // Don't know why have to set variable valid, but does not work otherwise.
+                                    var valid = (v === "true" ? true : false);
+
+                                    if (!valid) {
+                                        $scope.RTUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Research Table File.";
+                                        FileManager.setRTFileName($scope.RTUploadedFile);
+                                    }
+                                    else {
+                                        FileManager.setRTUploadFile(jsonObj.file);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else {
+                    $scope.$apply(function (scpe) {
+                        $scope.UploadStatus = evt.target.responseText;
+                    })
+                }
+            }
+
+            // Same as setFIles on mergeController.js
+            $scope.setFiles = function (type, element) {
+                // alert("setFiles: type = " + type);
+                $scope.$apply(function (scpe) {
+                    for (var i = 0; i < element.files.length; i++) {
+                        $scope.files.push({ ftype: type, file: element.files[i], seen: "false" });
+                    };
+                    $scope.progressVisible = false
+                });
+            }
+
+            $scope.RestoreFromBackup = function () {
+                var rtFileName = FileManager.getRTFileName();
+                var rtFileType;
+
+                if (rtFileName == 'unknown') {
+                    rtFileType = "xslx";
+                }
+                else {
+                    rtFileType = FileManager.getRTFileType();
+                }
+
+                $scope.restorationStatus = "Restoring...";
+
+                ResearchManager.restore(rtFileName, rtFileType).then(function (rs) {
+                    $scope.restorationStatus = "Restoration complete";
+                });
             }
         }]);
