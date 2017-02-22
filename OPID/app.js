@@ -1,5 +1,5 @@
 ﻿
-var desktop = true;
+var desktop = false;
 var server;
 
 if (desktop == true) {
