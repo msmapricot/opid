@@ -22,6 +22,12 @@ ResearchServices.factory('ResearchManager', ['$http', function ($http) {
         resolvedStatus = r;
     }
 
+    var researchTableEmpty = function() {
+        return $http.get(server + "api/isempty").then(function(result) {
+            return result.data;
+        });
+    }
+    
     var restoreResearchTable = function (rtFileName, rtFileType) {
         return $http.get(server + "api/restore",
             {
@@ -40,6 +46,7 @@ ResearchServices.factory('ResearchManager', ['$http', function ($http) {
         getResolvedStatus: getResolvedStatus,
         setResolvedStatus: setResolvedStatus,
         markStaleChecks: markStaleChecks,
+        researchTableEmpty: researchTableEmpty,
         restore: restoreResearchTable
     };
 }]);

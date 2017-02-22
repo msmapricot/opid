@@ -3,7 +3,6 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
         function ($rootScope, $scope, $http, $window, $route, FileManager, ResearchManager, DTOptionsBuilder, DTColumnBuilder) {
             $scope.tab = 'research';
 
-
             var timestampPromise = FileManager.getDownloadTimestamp();
 
             timestampPromise.then(function (d) {
@@ -32,7 +31,6 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
             }
 
             $scope.InterviewStaleChecks = function () {
-
                 var filePromise = FileManager.getDownloadStaleChecks("interviewstale", "csv");
 
                 filePromise.then(function (result) {
@@ -70,7 +68,6 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
             }
 
             $scope.ModificationsStaleChecks = function () {
-
                 var filePromise = FileManager.getDownloadStaleChecks("modificationsstale", "csv");
 
                 filePromise.then(function (result) {
@@ -181,10 +178,17 @@ MSMApp.controller('researchController', ['$rootScope', '$scope', '$http', '$wind
                     rtFileType = FileManager.getRTFileType();
                 }
 
-                $scope.restorationStatus = "Restoring...";
+                ResearchManager.researchTableEmpty().then(function(result)
+                {
+                    if (result == '"empty"') { // Note that result is a string within a string!
+                        $scope.restorationStatus = "Restoring...";
 
-                ResearchManager.restore(rtFileName, rtFileType).then(function (rs) {
-                    $scope.restorationStatus = "Restoration complete";
-                });
+                        ResearchManager.restore(rtFileName, rtFileType).then(function (rs) {
+                            $scope.restorationStatus = "Restoration complete";
+                        });
+                    } else {
+                        alert("Research Table Must Be Empty Before Restoring From Backup!");
+                    }
+                }) 
             }
         }]);

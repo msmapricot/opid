@@ -125,7 +125,7 @@ namespace MSM.Utils
             {
                 Date = Convert.ToDateTime(dataRow["Date"].ToString()),
                 RecordID = Convert.ToInt32(dataRow["Record ID"].ToString()),
-                InterviewRecordID = Convert.ToInt32(dataRow["Interview Record ID"].ToString()),
+                InterviewRecordID = (DBNull.Value.Equals(dataRow["Interview Record ID"]) ? 0 : Convert.ToInt32(dataRow["Interview Record ID"].ToString())),
                 Stale = Convert.ToBoolean(dataRow["Stale"]),
                 Name = dataRow["Name"].ToString(),
                 Num = Convert.ToInt32(dataRow["Check Number"].ToString()),

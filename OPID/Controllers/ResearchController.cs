@@ -19,6 +19,12 @@ namespace MSM.Controllers
         }
 
         [HttpGet]
+        public string IsEmpty()
+        {
+            return DataManager.IsEmpty();
+        }
+
+        [HttpGet]
         public void RestoreResearchTable(string rtFileName, string rtFileType)
         {
             DataManager.RestoreResearchTable(rtFileName, rtFileType);

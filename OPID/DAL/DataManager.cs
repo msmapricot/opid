@@ -23,7 +23,7 @@ namespace MSM.DAL
             if (firstCall)
             {
                 typoChecks = new List<Check>();
-                resolvedChecks = new List<Check>(); 
+                resolvedChecks = new List<Check>();
                 firstCall = false;
             }
 
@@ -33,12 +33,12 @@ namespace MSM.DAL
 
         public static List<DispositionRow> GetResearchRows(string apFileName, string apFileType)
         {
-           // List<DispositionRow> originalRows = new List<DispositionRow>();
-          //  string pathToApricotReportFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/App_Data/Public/{0}.{1}", apFileName, apFileType));
+            // List<DispositionRow> originalRows = new List<DispositionRow>();
+            //  string pathToApricotReportFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/App_Data/Public/{0}.{1}", apFileName, apFileType));
             string pathToResearchReportFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", apFileName, apFileType));
 
             List<DispositionRow> resRows = ExcelDataReader.GetResearchRows(pathToResearchReportFile);
-            
+
             /*
             var apricotReportFile = Linq2Excel.GetFactory(pathToApricotReportFile);
             Linq2Excel.PrepareApricotMapping(apricotReportFile);
@@ -102,7 +102,7 @@ namespace MSM.DAL
                 return new List<Check>();
             }
 
-           // List<Check> quickbooksChecks = new List<Check>();
+            // List<Check> quickbooksChecks = new List<Check>();
             string pathToQuickbooksFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", qbFileName, qbFileType));
 
             List<Check> quickbooksChecks = ExcelDataReader.GetQuickbooksChecks(pathToQuickbooksFile);
@@ -200,13 +200,13 @@ namespace MSM.DAL
             List<Check> unmatchedChecks = DetermineUnmatchedChecks(researchRows);
             AppendToResearchChecks(unmatchedChecks);
         }
-    
+
         public static void PersistUnmatchedChecks(List<ModificationRow> modificationRows)
         {
             List<Check> unmatchedChecks = DetermineUnmatchedChecks(modificationRows);
             AppendToResearchChecks(unmatchedChecks);
         }
-       
+
         private static bool IsTypo(int checkNum)
         {
             var tc = typoChecks.Find(c => c.Num == checkNum);
@@ -270,7 +270,7 @@ namespace MSM.DAL
         public static void MarkStaleChecks(string type)
         {
             List<Check> staleChecks = GetStaleChecks();
- 
+
             using (var dbCtx = new MSMEntities())
             {
                 var longUnmatched = dbCtx.Set<ResearchCheck>();
@@ -361,7 +361,7 @@ namespace MSM.DAL
             if (row.TDLCheckNum != 0
                 && !string.IsNullOrEmpty(row.TDLCheckDisposition))
             {
-  
+
                 // Find all checks among the researchChecks which are incidentally resolved by
                 // this check number.
                 List<Check> incidentalChecks = researchChecks.FindAll(c => Math.Abs(c.Num) == row.TDLCheckNum).ToList();
@@ -437,7 +437,7 @@ namespace MSM.DAL
                 }
             }
         }
- 
+
         private static void ResolveIncidentalChecks(List<DispositionRow> researchRows, List<Check> researchChecks, bool findTypos)
         {
             foreach (MSM.Models.DataRow row in researchRows)
@@ -524,7 +524,7 @@ namespace MSM.DAL
             }
         }
 
-        private static void CreateIncidentalResolvedChecks(List <Check> researchChecks)
+        private static void CreateIncidentalResolvedChecks(List<Check> researchChecks)
         {
             foreach (int cnum in incidentals)
             {
@@ -617,14 +617,14 @@ namespace MSM.DAL
             }
 
             unmatchedChecks.Add(new Check
-                    {
-                        RecordID = row.RecordID,
-                        InterviewRecordID = row.InterviewRecordID,
-                        Num = checkNum,    
-                        Name = string.Format("{0}, {1}", row.Lname, row.Fname),
-                        Date = row.Date,
-                        Service = service
-                    });
+            {
+                RecordID = row.RecordID,
+                InterviewRecordID = row.InterviewRecordID,
+                Num = checkNum,
+                Name = string.Format("{0}, {1}", row.Lname, row.Fname),
+                Date = row.Date,
+                Service = service
+            });
         }
 
         public static void NewUnmatchedCheck(ModificationRow row, string service)
@@ -838,9 +838,9 @@ namespace MSM.DAL
             }
 
             return staleChecks;
-        } 
+        }
 
-        public static List<ImportRow> GetStaleRows(List <Check> staleChecks)
+        public static List<ImportRow> GetStaleRows(List<Check> staleChecks)
         {
             List<ImportRow> importRows = new List<ImportRow>();
 
@@ -926,9 +926,11 @@ namespace MSM.DAL
                 }
             }
 
+            //  List<Check> zeros = researchChecks.FindAll(c => c.InterviewRecordID == 0);
+
             return researchChecks;
         }
- 
+
         private static void AppendToResearchChecks(List<Check> checks)
         {
             using (var dbCtx = new MSMEntities())
@@ -941,9 +943,9 @@ namespace MSM.DAL
                                               where c.Num == check.Num
                                               select c).FirstOrDefault();
 
-                   // if (existing == null && !IsKnownDisposition(check.Num))
-                   if (existing == null) // && string.IsNullOrEmpty(check.Clr))
-                   {
+                    // if (existing == null && !IsKnownDisposition(check.Num))
+                    if (existing == null) // && string.IsNullOrEmpty(check.Clr))
+                    {
                         ResearchCheck unm = new ResearchCheck
                         {
                             RecordID = check.RecordID,
@@ -976,7 +978,7 @@ namespace MSM.DAL
         public static string ResolveCheck(int checkNum)
         {
             string status;
-             
+
             using (var dbCtx = new MSMEntities())
             {
                 var longUnmatched = dbCtx.Set<ResearchCheck>();
@@ -1000,15 +1002,49 @@ namespace MSM.DAL
             }
         }
 
+        public static string IsEmpty()
+        {
+            string status = "full";
+
+            using (var dbCtx = new MSMEntities())
+            {
+                var longUnmatched = dbCtx.Set<ResearchCheck>();
+
+                if (longUnmatched.Count() == 0) // Is the table empty for rebuild?
+                {
+                    status = "empty";
+                }
+            }
+
+            return status;
+        }
+
         public static void RestoreResearchTable(string rtFileName, string rtFileType)
         {
             string pathToResearchTableFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", rtFileName, rtFileType));
 
             List<ResearchCheck> resChecks = ExcelDataReader.GetResearchChecks(pathToResearchTableFile);
 
-            int z;
+            RebuildResearchTable(resChecks);
+        }
 
-            z = 2;
+        private static void RebuildResearchTable(List<ResearchCheck> resChecks)
+        {
+            using (var dbCtx = new MSMEntities())
+            {
+                var longUnmatched = dbCtx.Set<ResearchCheck>();
+
+                if (longUnmatched.Count() == 0) // Is the table empty for rebuild?
+                {
+                    foreach (ResearchCheck rc in resChecks)
+                    {
+                        longUnmatched.Add(rc);
+                    }
+
+                    dbCtx.SaveChanges();
+                    return;
+                }
+            }
         }
     }
 }

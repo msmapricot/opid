@@ -103,7 +103,14 @@ namespace MSM
                defaults: new { controller = "Research", action="GetResearchChecks" }
             );
 
-          config.Routes.MapHttpRoute(
+            config.Routes.MapHttpRoute(
+                     name: "IsEmpty",
+                     routeTemplate: "api/isempty",
+                     defaults: new { controller = "Research", action = "IsEmpty" }
+                  );
+
+
+            config.Routes.MapHttpRoute(
                   name: "Restore",
                   routeTemplate: "api/restore",
                   defaults: new { controller = "Research", action = "RestoreResearchTable" }
