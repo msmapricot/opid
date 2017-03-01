@@ -1024,6 +1024,22 @@ namespace MSM.DAL
             string pathToResearchTableFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", rtFileName, rtFileType));
 
             List<ResearchCheck> resChecks = ExcelDataReader.GetResearchChecks(pathToResearchTableFile);
+            DateTime today = DateTime.Now;
+
+            // Mark checks over 30 days old as stale.
+            foreach (ResearchCheck rc in resChecks)
+            {
+                TimeSpan elapsed = today.Subtract(rc.Date);
+
+                if (elapsed.TotalDays > 30)
+                {
+                   rc.Stale = true;
+                }
+                else
+                {
+                    rc.Stale = false;
+                }
+            }
 
             RebuildResearchTable(resChecks);
         }

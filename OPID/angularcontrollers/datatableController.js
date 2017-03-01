@@ -146,7 +146,6 @@
                  }),
                  DTColumnBuilder.newColumn('RecordID').withTitle('Record ID'),
                  DTColumnBuilder.newColumn('InterviewRecordID').withTitle('Interview Record ID'),
-                 DTColumnBuilder.newColumn('Stale').withTitle('Stale'),
                  DTColumnBuilder.newColumn('Name').withTitle('Name'),
                  DTColumnBuilder.newColumn('Num').withTitle('Check Number'),
                  DTColumnBuilder.newColumn('Service').withTitle('Service')
