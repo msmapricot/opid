@@ -94,7 +94,6 @@
 
              vm.dtColumns = [
                  DTColumnBuilder.newColumn('RecordID').withTitle('Record ID'),
-             /*    DTColumnBuilder.newColumn('InterviewRecordID').withTitle('Interview Record ID'), */
                  DTColumnBuilder.newColumn('Lname').withTitle("Last Name"),
                  DTColumnBuilder.newColumn('Fname').withTitle("First Name"),
 
