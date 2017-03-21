@@ -134,27 +134,27 @@ namespace MSM.DAL
         {
             foreach (DispositionRow row in researchRows)
             {
-                if (row.LBVDCheckNum != 0 && string.IsNullOrEmpty(row.LBVDCheckDisposition))
+                if (row.LBVDCheckNum != 0 && (string.IsNullOrEmpty(row.LBVDCheckDisposition) || row.LBVDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "LBVD");
                 }
 
-                if (row.TIDCheckNum != 0 && string.IsNullOrEmpty(row.TIDCheckDisposition))
+                if (row.TIDCheckNum != 0 && (string.IsNullOrEmpty(row.TIDCheckDisposition) || row.TIDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "TID");
                 }
 
-                if (row.TDLCheckNum != 0 && string.IsNullOrEmpty(row.TDLCheckDisposition))
+                if (row.TDLCheckNum != 0 && (string.IsNullOrEmpty(row.TDLCheckDisposition) || row.TDLCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "TDL");
                 }
 
-                if (row.MBVDCheckNum != 0 && string.IsNullOrEmpty(row.MBVDCheckDisposition))
+                if (row.MBVDCheckNum != 0 && (string.IsNullOrEmpty(row.MBVDCheckDisposition) || row.MBVDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "MBVD");
                 }
 
-                if (row.SDCheckNum != 0 && string.IsNullOrEmpty(row.SDCheckDisposition))
+                if (row.SDCheckNum != 0 && (string.IsNullOrEmpty(row.SDCheckDisposition) || row.SDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "SD");
                 }
@@ -305,7 +305,8 @@ namespace MSM.DAL
         private static void ResolveIncidentalLBVD(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
         {
             if (row.LBVDCheckNum != 0
-                && !string.IsNullOrEmpty(row.LBVDCheckDisposition))
+                && !string.IsNullOrEmpty(row.LBVDCheckDisposition)
+                && !row.LBVDCheckDisposition.Equals("Stale Check"))
             {
                 // Find all checks among the researchChecks which are incidentally resolved by
                 // this check number.
@@ -332,7 +333,8 @@ namespace MSM.DAL
         private static void ResolveIncidentalTID(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
         {
             if (row.TIDCheckNum != 0
-                && !string.IsNullOrEmpty(row.TIDCheckDisposition))
+                && !string.IsNullOrEmpty(row.TIDCheckDisposition)
+                && !row.TIDCheckDisposition.Equals("Stale Check"))
             {
                 // Find all checks among the researchChecks which are incidentally resolved by
                 // this check number.
@@ -359,7 +361,8 @@ namespace MSM.DAL
         private static void ResolveIncidentalTDL(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
         {
             if (row.TDLCheckNum != 0
-                && !string.IsNullOrEmpty(row.TDLCheckDisposition))
+                && !string.IsNullOrEmpty(row.TDLCheckDisposition)
+                && !row.TDLCheckDisposition.Equals("Stale Check"))
             {
 
                 // Find all checks among the researchChecks which are incidentally resolved by
@@ -387,7 +390,8 @@ namespace MSM.DAL
         private static void ResolveIncidentalMBVD(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
         {
             if (row.MBVDCheckNum != 0
-                && !string.IsNullOrEmpty(row.MBVDCheckDisposition))
+                && !string.IsNullOrEmpty(row.MBVDCheckDisposition)
+                && !row.MBVDCheckDisposition.Equals("Stale Check"))
             {
                 // Find all checks among the researchChecks which are incidentally resolved by
                 // this check number.
@@ -414,7 +418,8 @@ namespace MSM.DAL
         private static void ResolveIncidentalSD(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
         {
             if (row.SDCheckNum != 0
-                && !string.IsNullOrEmpty(row.SDCheckDisposition))
+                && !string.IsNullOrEmpty(row.SDCheckDisposition)
+                && row.SDCheckDisposition.Equals("Stale Check"))
             {
                 // Find all checks among the researchChecks which are incidentally resolved by
                 // this check number.
