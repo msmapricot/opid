@@ -167,27 +167,27 @@ namespace MSM.DAL
         {
             foreach (ModificationRow row in modificationRows)
             {
-                if (row.LBVDCheckNum != 0 && string.IsNullOrEmpty(row.LBVDCheckDisposition))
+                if (row.LBVDCheckNum != 0 && (string.IsNullOrEmpty(row.LBVDCheckDisposition) || row.LBVDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "LBVD");
                 }
 
-                if (row.TIDCheckNum != 0 && string.IsNullOrEmpty(row.TIDCheckDisposition))
+                if (row.TIDCheckNum != 0 && (string.IsNullOrEmpty(row.TIDCheckDisposition) || row.TIDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "TID");
                 }
 
-                if (row.TDLCheckNum != 0 && string.IsNullOrEmpty(row.TDLCheckDisposition))
+                if (row.TDLCheckNum != 0 && (string.IsNullOrEmpty(row.TDLCheckDisposition) || row.TDLCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "TDL");
                 }
 
-                if (row.MBVDCheckNum != 0 && string.IsNullOrEmpty(row.MBVDCheckDisposition))
+                if (row.MBVDCheckNum != 0 && (string.IsNullOrEmpty(row.MBVDCheckDisposition) || row.MBVDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "MBVD");
                 }
 
-                if (row.SDCheckNum != 0 && string.IsNullOrEmpty(row.SDCheckDisposition))
+                if (row.SDCheckNum != 0 && (string.IsNullOrEmpty(row.SDCheckDisposition) || row.SDCheckDisposition.Equals("Stale Check")))
                 {
                     NewUnmatchedCheck(row, "SD");
                 }
