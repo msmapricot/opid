@@ -137,7 +137,7 @@
              }).withPaginationType('full_numbers')
                .withDisplayLength(10)
                .withOption('lengthChange', false)
-               .withButtons(['print', 'excel']);
+               .withButtons(['print', 'excel']); // the excel button sometimes disappears at AppHarbor
 
              vm.dtColumns = [
                  DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
@@ -167,7 +167,7 @@
              }).withPaginationType('full_numbers')
                .withDisplayLength(10)
                .withOption('lengthChange', false)
-               .withButtons(['print', 'excel']);
+               .withButtons(['print', 'excel']); // the excel button sometimes disappears at AppHarbor
 
              vm.dtColumns = [
                       DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
