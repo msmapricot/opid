@@ -137,7 +137,7 @@
              }).withPaginationType('full_numbers')
                .withDisplayLength(10)
                .withOption('lengthChange', false)
-               .withButtons(['print', 'excel']); // the excel button sometimes disappears at AppHarbor
+               .withButtons(['excel', 'print']); // changed order of Excel and Print buttons
 
              vm.dtColumns = [
                  DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
@@ -167,7 +167,7 @@
              }).withPaginationType('full_numbers')
                .withDisplayLength(10)
                .withOption('lengthChange', false)
-               .withButtons(['print', 'excel']); // the excel button sometimes disappears at AppHarbor
+               .withButtons(['excel', 'print']); // changed order of Excel and Print buttons
 
              vm.dtColumns = [
                       DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
@@ -192,7 +192,7 @@
              }).withPaginationType('full_numbers')
                .withDisplayLength(10)
                .withOption('lengthChange', false)
-               .withButtons(['print', 'excel']);
+               .withButtons(['excel', 'print']);  // changed order of Excel and Print buttons
              
              vm.dtColumns = [
                       DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
