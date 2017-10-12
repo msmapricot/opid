@@ -69,24 +69,46 @@ namespace MSM.Utils
             return modRows;
         }
 
+        public static Check GetClearedCheck(System.Data.DataRow row, int k)
+        {
+            Check check = null;
+
+            try
+            {
+                check = new Check
+                {
+                    Date = GetDateValue(row),
+                    Num = GetCheckNum(row),
+                    // PLB 10/12/ 2017 No longer have Memo field since Bill is not providing it. 
+                    // PLB 10/12/2017 Check for blank row by 0 value in Num field instead of NoCheck value in Memo field.
+                    //    Memo = GetMemo(dataRow), 
+                    Clr = GetCheckStatus(row),
+                    Amount = GetCheckAmount(row)
+                };
+            }
+            catch (Exception e)
+            {
+                
+            }
+
+            return check;
+            
+        }
+
         public static List<Check> GetQuickbooksChecks(string filePath)
         {
-            List<Check> rowChecks = new ExcelData(filePath).GetData().Select(dataRow => 
-                new Check
-                {
-                    Date = GetDateValue(dataRow),
-                    Num = GetCheckNum(dataRow),  
-                    Memo = GetMemo(dataRow),  
-                    Clr = GetCheckStatus(dataRow),
-                    Amount = GetCheckAmount(dataRow)
-                }).ToList();
+            int k = 0;
+            List<Check> rowChecks = new ExcelData(filePath).GetData().Select(dataRow =>  
+                 GetClearedCheck(dataRow, k++)
+                ).ToList();
 
             List<Check> quickbooksChecks = new List<Check>();
 
             // Remove checks corresponding to blank rows in Excel file.
             foreach(Check check in rowChecks)
             {
-                if (!check.Memo.Equals("NoCheck"))
+                if (check.Num != 0)  // check.Num == 0 denotes blank row. Could be because Num = EFT. See GetCheckNum.
+                //if (!check.Memo.Equals("NoCheck"))
                 {
                     quickbooksChecks.Add(check);
                 }
@@ -100,7 +122,7 @@ namespace MSM.Utils
             List<Check> rowChecks = new ExcelData(filePath).GetData().Select(dataRow =>
                 new Check
                 {
-                    Date = GetDateValue(dataRow),
+                 //   Date = GetDateValue(dataRow),  // PLB 10/12/2017 Don't really need date.
                     Num = GetCheckNum(dataRow),
                     Memo = GetMemo(dataRow),
                 }).ToList();
@@ -151,7 +173,7 @@ namespace MSM.Utils
             string dvalue;
 
             if (DBNull.Value.Equals(row["Date"]))
-            {
+            { 
                 // This is a blank row. Provide a dummy value.
                 dvalue = "12/12/1900";
             }
@@ -176,6 +198,10 @@ namespace MSM.Utils
             else
             {
                 cvalue = row["Num"].ToString();
+                if (cvalue.Equals("EFT"))  // PLB 10/12/2017. Bill's file may have EFT in Num field. Treat as blank line.
+                {
+                    cvalue = "0";
+                }
             }
 
             return Convert.ToInt32(cvalue);

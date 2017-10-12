@@ -98,7 +98,7 @@ namespace MSM.DAL
         {
             if (qbFileName.Equals("unknown"))
             {
-                // Return an emmpty list of checks.
+                // Return an empty list of checks.
                 return new List<Check>();
             }
 

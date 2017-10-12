@@ -106,7 +106,7 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                                     var valid = (v === "true" ? true : false);
 
                                     if (!valid) {
-                                        $scope.QBUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Quickbooks file.";
+                                        $scope.QBUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Cleared Checks File.";
                                         FileManager.setQBFileName($scope.QBUploadedFile);
                                     }
                                     else {
