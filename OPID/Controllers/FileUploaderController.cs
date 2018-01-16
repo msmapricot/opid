@@ -152,11 +152,12 @@ namespace MSM.Controllers
             {
                 var checks = ExcelDataReader.GetQuickbooksChecks(fpath);
 
-              //  var clr = checks.Count(c => c.Clr.Equals("Unknown"));
+                //  var clr = checks.Count(c => c.Clr.Equals("Unknown"));
 
-                var clr = 0;  // PLB 1/19/17 If column Clr has no value it is not an error!
+                //   var clr = 0;  // PLB 1/19/17 If column Clr has no value it is not an error!
 
-                valid = clr == 0;
+                //   valid = clr == 0;
+                valid = true;
             }
             catch
             {

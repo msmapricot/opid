@@ -82,13 +82,12 @@ namespace MSM.Utils
                     // PLB 10/12/ 2017 No longer have Memo field since Bill is not providing it. 
                     // PLB 10/12/2017 Check for blank row by 0 value in Num field instead of NoCheck value in Memo field.
                     //    Memo = GetMemo(dataRow), 
-                    Clr = GetCheckStatus(row),
+                  //  Clr = GetCheckStatus(row),  // PLB 1/16/18 Simplified file does not contain Clr column
                     Amount = GetCheckAmount(row)
                 };
             }
             catch (Exception e)
-            {
-                
+            { 
             }
 
             return check;
@@ -122,9 +121,9 @@ namespace MSM.Utils
             List<Check> rowChecks = new ExcelData(filePath).GetData().Select(dataRow =>
                 new Check
                 {
-                 //   Date = GetDateValue(dataRow),  // PLB 10/12/2017 Don't really need date.
+                    Date = GetDateValue(dataRow),  // PLB 10/12/2017 Used when clicking on Inspect tab.
                     Num = GetCheckNum(dataRow),
-                    Memo = GetMemo(dataRow),
+                    Memo = "Voided check" //GetMemo(dataRow),
                 }).ToList();
 
             List<Check> voidedChecks = new List<Check>();
@@ -132,7 +131,7 @@ namespace MSM.Utils
             // Remove checks corresponding to blank rows in Excel file.
             foreach (Check check in rowChecks)
             {
-                if (!check.Memo.Equals("NoCheck"))
+                if (check.Num != 0)  // if (!check.Memo.Equals("NoCheck"))
                 {
                     voidedChecks.Add(check);
                 }
@@ -244,6 +243,7 @@ namespace MSM.Utils
         {
             string svalue;
 
+            /*
             if (DBNull.Value.Equals(row["Clr"]))
             {
                 svalue = "Unknown";
@@ -252,7 +252,9 @@ namespace MSM.Utils
             {
                 svalue = row["Amount"].ToString();
             }
+            */
 
+            svalue = row["Amount"].ToString();
             return svalue;
         }
 

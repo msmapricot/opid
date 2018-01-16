@@ -111,10 +111,12 @@ namespace MSM.DAL
             {
                 // Special rule for checks in Quickbooks: If a check is marked cleared in the amount
                 // of 0.00, then it is actually a voided check.
+                /*
                 if (DataManager.GetDispositionFromCheck(check).Equals("Cleared") && check.Amount.Equals("0"))
                 {
                     check.Clr = "Voided";
                 }
+                */
             }
 
             /*
@@ -836,7 +838,7 @@ namespace MSM.DAL
             {
                 TimeSpan elapsed = today.Subtract(check.Date);
 
-                if (elapsed.TotalDays > 30 && check.Stale != true) // don't return a check already marked stale
+                if (elapsed.TotalDays > 30) // && check.Stale != true) // don't return a check already marked stale
                 {
                     staleChecks.Add(check);
                 }
@@ -1032,6 +1034,13 @@ namespace MSM.DAL
             DateTime today = DateTime.Now;
 
             // Mark checks over 30 days old as stale.
+            /* PLB 10/16/2017 No, don't do this at restore time. A check in the Research Table that is over 30 days old will
+             * be marked as stale by the import file created by "Download interview stale checks" on the Research tab. This
+             * import file will have a name like
+             *    interview-stalechecks-14-Oct-2017-1141.csv
+             * When this file is imported all the old checks (> 30 days) in the Research Table will be marked stale. A similar
+             * file to import will be created by "Download modifications stale checks" on the Research tab.
+             * 
             foreach (ResearchCheck rc in resChecks)
             {
                 TimeSpan elapsed = today.Subtract(rc.Date);
@@ -1045,6 +1054,7 @@ namespace MSM.DAL
                     rc.Stale = false;
                 }
             }
+            */
 
             RebuildResearchTable(resChecks);
         }
