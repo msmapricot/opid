@@ -174,19 +174,42 @@ namespace MSM.Controllers
             
             foreach (ImportRow d in updatedRows)
             {
-                if (d.LBVDCheckNum > 0 || d.TIDCheckNum > 0 || d.TDLCheckNum > 0 || d.MBVDCheckNum > 0 || d.SDCheckNum > 0)
+                if (d.LBVDCheckNum > 0 || d.LBVDCheckNum2 > 0 || d.LBVDCheckNum3 > 0
+                    || d.TIDCheckNum > 0 || d.TIDCheckNum2 > 0 || d.TIDCheckNum3 > 0
+                    || d.TDLCheckNum > 0 || d.TDLCheckNum2 > 0 || d.TDLCheckNum3 > 0 
+                    || d.MBVDCheckNum > 0 || d.MBVDCheckNum2 > 0 || d.MBVDCheckNum3 > 0
+                    || d.SDCheckNum > 0)
                 {
                     // Only create a row if it contains a modified check number.
-                    string csvRow = string.Format(",{0},{1},{2},{3},{4},{5},{6},{7},{8}", // ,{9},{10}",
+                    string csvRow = string.Format(",{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24}", // ,{9},{10}",
                         d.InterviewRecordID,
                         (d.LBVDCheckNum > 0 ? d.LBVDCheckNum : 0),
                         (d.LBVDCheckNum > 0 ? d.LBVDCheckDisposition : string.Empty),
+                        (d.LBVDCheckNum2 > 0 ? d.LBVDCheckNum2 : 0),
+                        (d.LBVDCheckNum2 > 0 ? d.LBVDCheck2Disposition : string.Empty),
+                        (d.LBVDCheckNum3 > 0 ? d.LBVDCheckNum3 : 0),
+                        (d.LBVDCheckNum3 > 0 ? d.LBVDCheck3Disposition : string.Empty),
+
                         (d.TIDCheckNum > 0 ? d.TIDCheckNum : 0),
                         (d.TIDCheckNum > 0 ? d.TIDCheckDisposition : string.Empty),
+                        (d.TIDCheckNum2 > 0 ? d.TIDCheckNum2 : 0),
+                        (d.TIDCheckNum2 > 0 ? d.TIDCheck2Disposition : string.Empty),
+                        (d.TIDCheckNum3 > 0 ? d.TIDCheckNum3 : 0),
+                        (d.TIDCheckNum3 > 0 ? d.TIDCheck3Disposition : string.Empty),
+
                         (d.TDLCheckNum > 0 ? d.TDLCheckNum : 0),
                         (d.TDLCheckNum > 0 ? d.TDLCheckDisposition : string.Empty),
+                        (d.TDLCheckNum2 > 0 ? d.TDLCheckNum2 : 0),
+                        (d.TDLCheckNum2 > 0 ? d.TDLCheck2Disposition : string.Empty),
+                        (d.TDLCheckNum3 > 0 ? d.TDLCheckNum3 : 0),
+                        (d.TDLCheckNum3 > 0 ? d.TDLCheck3Disposition : string.Empty),
+
                         (d.MBVDCheckNum > 0 ? d.MBVDCheckNum : 0),
-                        (d.MBVDCheckNum > 0 ? d.MBVDCheckDisposition : string.Empty));
+                        (d.MBVDCheckNum > 0 ? d.MBVDCheckDisposition : string.Empty),
+                        (d.MBVDCheckNum2 > 0 ? d.MBVDCheckNum2 : 0),
+                        (d.MBVDCheckNum2 > 0 ? d.MBVDCheck2Disposition : string.Empty),
+                        (d.MBVDCheckNum3 > 0 ? d.MBVDCheckNum3 : 0),
+                        (d.MBVDCheckNum3 > 0 ? d.MBVDCheck3Disposition : string.Empty));
                     //     (d.SDCheckNum > 0 ? d.SDCheckNum : 0),
                     //     (d.SDCheckNum > 0 ? d.SDCheckDisposition : string.Empty));
 

@@ -395,7 +395,9 @@
     <Content Include="Scripts\jquery-1.7.2.js" />
     <Content Include="Scripts\jquery-1.7.2.min.js" />
     <Content Include="Uploads\DummyUploadFile.txt" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Peter.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -411,6 +413,12 @@
     <Compile Include="Controllers\ResearchController.cs" />
     <Compile Include="Controllers\ResolvedController.cs" />
     <Compile Include="DAL\DataManager.cs" />
+    <Compile Include="DAL\OPIDDB.cs" />
+    <Compile Include="DAL\OPIDMigrations\201802051544242_InitialCreate.cs" />
+    <Compile Include="DAL\OPIDMigrations\201802051544242_InitialCreate.Designer.cs">
+      <DependentUpon>201802051544242_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\OPIDMigrations\Configuration.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -455,7 +463,17 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\OPIDEntities\OPIDEntities.csproj">
+      <Project>{70811629-3197-416b-961d-74a2b10f2df5}</Project>
+      <Name>OPIDEntities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DAL\OPIDMigrations\201802051544242_InitialCreate.resx">
+      <DependentUpon>201802051544242_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

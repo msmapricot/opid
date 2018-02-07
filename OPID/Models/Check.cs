@@ -17,6 +17,8 @@ namespace MSM.Models
 
         public string Service { get; set; }
 
+        public string Disposition { get; set; }
+
         public string Clr { get; set; }
 
         public string Amount { get; set; }

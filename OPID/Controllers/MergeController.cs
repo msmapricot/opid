@@ -16,7 +16,7 @@ namespace MSM.Controllers
 {
     public class MergeController : ApiController
     {
-        private static void DetermineResolvedChecks(List<Check> checks, List<Check> researchChecks)
+        private static void DetermineResolvedChecks(List<Check> checks, string type, List<Check> researchChecks)
         {
             foreach (Check check in checks)
             {
@@ -32,11 +32,11 @@ namespace MSM.Controllers
                 {
                     foreach (Check matchedCheck in matchedChecks)
                     {
-                        string disposition = DataManager.GetDispositionFromCheck(check);
+                        bool protectedCheck = DataManager.IsProtectedCheck(matchedCheck.Disposition);
 
-                        if (!disposition.Equals("Unknown"))
+                        if (!protectedCheck)
                         {
-                            DataManager.NewResolvedCheck(matchedCheck, disposition);
+                            DataManager.NewResolvedCheck(matchedCheck, type);
                         }
                     }
                 }
@@ -95,12 +95,12 @@ namespace MSM.Controllers
         {
             DataManager.Init();
 
-            List<Check> researchChecks = DataManager.GetResearchChecks();
+            List<Check> researchChecks = DataManager.GetUnresolvedChecks();
             List<Check> qbChecks = DataManager.GetQuickbooksChecks(qbFileName, qbFileType);
             List<Check> voidedChecks = DataManager.GetVoidedChecks(vcFileName, vcFileType);
  
-            DetermineResolvedChecks(qbChecks, researchChecks);
-            DetermineResolvedChecks(voidedChecks, researchChecks);
+            DetermineResolvedChecks(qbChecks, "Cleared", researchChecks);
+            DetermineResolvedChecks(voidedChecks, "Voided", researchChecks);
 
             // Remove the set of resolved checks determined above from the Research Table. 
             DataManager.RemoveResolvedChecks();

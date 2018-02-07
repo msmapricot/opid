@@ -23,5 +23,6 @@ namespace MSM
         public string Service { get; set; }
         public bool Matched { get; set; }
         public bool Stale { get; set; }
+        public string Disposition { get; set; }
     }
 }

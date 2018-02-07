@@ -16,6 +16,7 @@
           <Property Name="Num" Type="int" Nullable="false" />
           <Property Name="Date" Type="datetime" Nullable="false" />
           <Property Name="Service" Type="nvarchar" MaxLength="5" Nullable="false" />
+          <Property Name="Disposition" Type="nvarchar" MaxLength="20" />
           <Property Name="Matched" Type="bit" Nullable="false" />
           <Property Name="Stale" Type="bit" Nullable="false" />
         </EntityType>
@@ -39,6 +40,7 @@
           <Property Name="Service" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Matched" Type="Boolean" Nullable="false" />
           <Property Name="Stale" Type="Boolean" Nullable="false" />
+          <Property Name="Disposition" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="MSMEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="ResearchChecks" EntityType="Self.ResearchCheck" />
@@ -52,6 +54,7 @@
           <EntitySetMapping Name="ResearchChecks">
             <EntityTypeMapping TypeName="MSMModel.ResearchCheck">
               <MappingFragment StoreEntitySet="ResearchCheck">
+                <ScalarProperty Name="Disposition" ColumnName="Disposition" />
                 <ScalarProperty Name="Stale" ColumnName="Stale" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="RecordID" ColumnName="RecordID" />

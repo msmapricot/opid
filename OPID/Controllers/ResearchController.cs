@@ -12,10 +12,18 @@ namespace MSM.Controllers
     public class ResearchController : ApiController
     {
         // This method returns the table displayed on the Research tab.
+        /*
         [HttpGet]
         public List<Check> GetResearchChecks()
         {
             return DataManager.GetResearchChecks();
+        }
+        */
+
+        [HttpGet]
+        public List<Check> GetUnresolvedChecks()
+        {
+            return DataManager.GetUnresolvedChecks();
         }
 
         [HttpGet]
