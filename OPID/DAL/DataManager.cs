@@ -1018,11 +1018,39 @@ namespace MSM.DAL
                         irow.LBVDCheckDisposition = disposition;
                     }
                     break;
+                case "LBVD2":
+                    if (irow.LBVDCheckNum2 == 0)
+                    {
+                        irow.LBVDCheckNum2 = checkNum;
+                        irow.LBVDCheck2Disposition = disposition;
+                    }
+                    break;
+                case "LBVD3":
+                    if (irow.LBVDCheckNum3 == 0)
+                    {
+                        irow.LBVDCheckNum3 = checkNum;
+                        irow.LBVDCheck3Disposition = disposition;
+                    }
+                    break;
                 case "TID":
                     if (irow.TIDCheckNum == 0)
                     {
                         irow.TIDCheckNum = checkNum;
                         irow.TIDCheckDisposition = disposition;
+                    }
+                    break;
+                case "TID2":
+                    if (irow.TIDCheckNum2 == 0)
+                    {
+                        irow.TIDCheckNum2 = checkNum;
+                        irow.TIDCheck2Disposition = disposition;
+                    }
+                    break;
+                case "TID3":
+                    if (irow.TIDCheckNum3 == 0)
+                    {
+                        irow.TIDCheckNum3 = checkNum;
+                        irow.TIDCheck3Disposition = disposition;
                     }
                     break;
                 case "TDL":
@@ -1032,11 +1060,39 @@ namespace MSM.DAL
                         irow.TDLCheckDisposition = disposition;
                     }
                     break;
+                case "TDL2":
+                    if (irow.TDLCheckNum2 == 0)
+                    {
+                        irow.TDLCheckNum2 = checkNum;
+                        irow.TDLCheck2Disposition = disposition;
+                    }
+                    break;
+                case "TDL3":
+                    if (irow.TDLCheckNum3 == 0)
+                    {
+                        irow.TDLCheckNum3 = checkNum;
+                        irow.TDLCheck3Disposition = disposition;
+                    }
+                    break;
                 case "MBVD":
                     if (irow.MBVDCheckNum == 0)
                     {
                         irow.MBVDCheckNum = checkNum;
                         irow.MBVDCheckDisposition = disposition;
+                    }
+                    break;
+                case "MBVD2":
+                    if (irow.MBVDCheckNum2 == 0)
+                    {
+                        irow.MBVDCheckNum2 = checkNum;
+                        irow.MBVDCheck2Disposition = disposition;
+                    }
+                    break;
+                case "MBVD3":
+                    if (irow.MBVDCheckNum3 == 0)
+                    {
+                        irow.MBVDCheckNum3 = checkNum;
+                        irow.MBVDCheck3Disposition = disposition;
                     }
                     break;
                 case "SD":
@@ -1098,6 +1154,8 @@ namespace MSM.DAL
                         foreach (ImportRow irow in irows)
                         {
                             if ((resolvedCheck.Service == "LBVD" || resolvedCheck.Service == "LBVD2" || resolvedCheck.Service == "LBVD3"
+                                || resolvedCheck.Service == "TID" || resolvedCheck.Service == "TID2" || resolvedCheck.Service == "TID3"
+                                || resolvedCheck.Service == "TDL" || resolvedCheck.Service == "TDL2" || resolvedCheck.Service == "TDL3"
                                 || resolvedCheck.Service == "MBVD" || resolvedCheck.Service == "MBVD2" || resolvedCheck.Service == "MBVD3")
                                 &&
                                 ((resolvedCheck.InterviewRecordID != 0 && resolvedCheck.InterviewRecordID != irow.InterviewRecordID)
