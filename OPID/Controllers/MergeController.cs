@@ -31,12 +31,48 @@ namespace MSM.Controllers
                 if (matchedChecks.Count() != 0)
                 {
                     foreach (Check matchedCheck in matchedChecks)
-                    {
+                    {       
                         bool protectedCheck = DataManager.IsProtectedCheck(matchedCheck.Disposition);
 
                         if (!protectedCheck)
                         {
                             DataManager.NewResolvedCheck(matchedCheck, type);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void DetermineReResolvedChecks(List<Check> checks, string type, List<Check> researchChecks)
+        {
+            foreach (Check check in checks)
+            {
+                List<Check> matchedChecks = researchChecks.FindAll(c => c.Num == check.Num);
+
+                // Normally, matchedChecks.Count() == 0 or matchedChecks.Count == 1 
+                // But in the case of a birth certificate, a single check number may cover
+                // multiple children. In this case matchedChecks.Count() > 1.
+                // The foreach loop below creates a new resolved check for each matched check.
+                // This means that if one check number is used by a parent and his/her children,
+                // then there will be a resolved check for the parent and each child.
+                if (matchedChecks.Count() != 0)
+                {
+                    foreach (Check matchedCheck in matchedChecks)
+                    {
+                        bool mistakenlyResolved = DataManager.IsMistakenlyResolved(matchedCheck.Disposition);
+                        bool protectedCheck = DataManager.IsProtectedCheck(matchedCheck.Disposition);
+
+                        if (!protectedCheck)
+                        {
+                            if (mistakenlyResolved)
+                            {
+                                // This will "unset" the radio button from Cleared, Voided, etc. to no setting at all.
+                                DataManager.NewResolvedCheck(matchedCheck, "");
+                            }
+                            else
+                            {
+                                DataManager.NewResolvedCheck(matchedCheck, type);
+                            }
                         }
                     }
                 }
@@ -106,15 +142,50 @@ namespace MSM.Controllers
             DataManager.RemoveResolvedChecks();
         }
 
+        private static void ReResolveResearchChecks(string rrcFileName, string rrcFileType, string rrvFileName, string rrvFileType)
+        {
+            DataManager.Init();
+
+            List<Check> researchChecks = DataManager.GetUnresolvedChecks();
+            List<Check> qbChecks = DataManager.GetQuickbooksChecks(rrcFileName, rrcFileType);
+            List<Check> voidedChecks = DataManager.GetVoidedChecks(rrvFileName, rrvFileType);
+
+            DetermineReResolvedChecks(qbChecks, "Cleared", researchChecks);
+            DetermineReResolvedChecks(voidedChecks, "Voided", researchChecks);
+
+
+            // Remove the set of resolved checks determined above from the Research Table. 
+            DataManager.RemoveReResolvedChecks();
+        }
+
+        private static void ProcessMistakenlyResolvedChecks(string mrFileName, string mrFileType)
+        {
+            List<Check> mistakenlyResolved = DataManager.GetQuickbooksChecks(mrFileName, mrFileType);
+            DataManager.ProcessMistakenlyResolvedChecks(mistakenlyResolved); 
+        }
+
+
         [HttpGet]
-        public void PerformMerge(string vcFileName, string vcFileType, string apFileName, string apFileType, string mdFileName, string mdFileType, string qbFileName, string qbFileType)
+        public void PerformMerge(string vcFileName, string vcFileType, string apFileName, string apFileType, string mdFileName, string mdFileType, string qbFileName, string qbFileType, string mrFileName, string mrFileType, string rrcFileName, string rrcFileType, string rrvFileName, string rrvFileType)
         {
             if (apFileName.Equals("unknown") && mdFileName.Equals("unknown"))
             {
-                // The user did not specify an Interview Research File or a Modifications Research File 
-                // on the merge screen. 
-                // The user is trying to resolve some research checks in the Research Table.
-                ResolveResearchChecks(vcFileName, vcFileType, qbFileName, qbFileType);
+                if (!vcFileName.Equals("unknown") || !qbFileName.Equals("unknown"))
+                {
+                    // The user did not specify an Interview Research File or a Modifications Research File 
+                    // on the merge screen. 
+                    // The user is trying to resolve some research checks in the Research Table
+                    // by inputting either a Cleared Checks file or a Voided Checks file.
+                    ResolveResearchChecks(vcFileName, vcFileType, qbFileName, qbFileType);
+                }
+                else if (!mrFileName.Equals("unknown"))
+                {
+                    ProcessMistakenlyResolvedChecks(mrFileName, mrFileType);
+                }
+                else if (!rrcFileName.Equals("unknown") || !rrvFileName.Equals("unknown"))
+                {
+                    ReResolveResearchChecks(rrcFileName, rrcFileType, rrvFileName, rrvFileType);
+                }
             }
             else if (vcFileName.Equals("unknown") && qbFileName.Equals("unknown"))
             {

@@ -57,6 +57,124 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         return uploadedFiles.qbFileType;
     }
 
+    var setQBUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var qbUploaded = uploadedFiles.qbFileName;
+
+        if (qbUploaded == undefined || qbUploaded != fname) {
+            uploadedFiles.qbFileName = fname;
+            uploadedFiles.qbFileType = ftype;
+            addToMenuFiles("Quickbooks", fname, ftype);
+        }
+    }
+
+    // Mistakenly resolved 
+    var getMRFileName = function () {
+        if (uploadedFiles.mrFileName == undefined) {
+            return "unknown";
+        }
+
+        return uploadedFiles.mrFileName;
+    }
+
+    var setMRFileName = function (name) {
+        uploadedFiles.mrFileName = name;
+    }
+
+    var getMRFileType = function () {
+        if (uploadedFiles.mrFileType == undefined) {
+            return "";
+        }
+
+        return uploadedFiles.mrFileType;
+    }
+
+    var setMRUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var mrUploaded = uploadedFiles.mrFileName;
+
+        if (mrUploaded == undefined || mrUploaded != fname) {
+            uploadedFiles.mrFileName = fname;
+            uploadedFiles.mrFileType = ftype;
+            addToMenuFiles("MistakenlyResolved", fname, ftype);
+        }
+    }
+    // End Mistakenly resolved
+
+    // Re-resolve cleared
+    var getRRCFileName = function () {
+        if (uploadedFiles.rrcFileName == undefined) {
+            return "unknown";
+        }
+
+        return uploadedFiles.rrcFileName;
+    }
+
+    var setRRCFileName = function (name) {
+        uploadedFiles.rrcFileName = name;
+    }
+
+    var getRRCFileType = function () {
+        if (uploadedFiles.rrcFileType == undefined) {
+            return "";
+        }
+
+        return uploadedFiles.rrcFileType;
+    }
+
+    var setRRCUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var rrcUploaded = uploadedFiles.rrcFileName;
+
+        if (rrcUploaded == undefined || rrcUploaded != fname) {
+            uploadedFiles.rrcFileName = fname;
+            uploadedFiles.rrcFileType = ftype;
+            addToMenuFiles("ReResolveCleared", fname, ftype);
+        }
+    }
+    // End Re-resolve cleared
+
+    // Re-resolve voided
+    var getRRVFileName = function () {
+        if (uploadedFiles.rrvFileName == undefined) {
+            return "unknown";
+        }
+
+        return uploadedFiles.rrvFileName;
+    }
+
+    var setRRVFileName = function (name) {
+        uploadedFiles.rrvFileName = name;
+    }
+
+    var getRRVFileType = function () {
+        if (uploadedFiles.rrvFileType == undefined) {
+            return "";
+        }
+
+        return uploadedFiles.rrvFileType;
+    }
+
+    var setRRVUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var rrvUploaded = uploadedFiles.rrvFileName;
+
+        if (rrvUploaded == undefined || rrvUploaded != fname) {
+            uploadedFiles.rrvFileName = fname;
+            uploadedFiles.rrvFileType = ftype;
+            addToMenuFiles("ReResolveVoided", fname, ftype);
+        }
+    }
+    // End Re-resolve voided
+
     var setAPUploadFile = function (fileObj) {
         var fparts = fileObj.name.split(".");
         var fname = fparts[0];
@@ -239,6 +357,21 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         setQBFileName: setQBFileName,
         getQBFileType: getQBFileType,
         setQBUploadFile: setQBUploadFile,
+
+        getMRFileName: getMRFileName,
+        setMRFileName: setMRFileName,
+        getMRFileType: getMRFileType,
+        setMRUploadFile: setMRUploadFile,
+
+        getRRCFileName: getRRCFileName,
+        setRRCFileName: setRRCFileName,
+        getRRCFileType: getRRCFileType,
+        setRRCUploadFile: setRRCUploadFile,
+
+        getRRVFileName: getRRVFileName,
+        setRRVFileName: setRRVFileName,
+        getRRVFileType: getRRVFileType,
+        setRRVUploadFile: setRRVUploadFile,
 
         getAPFileName: getAPFileName,
         setAPFileName: setAPFileName,

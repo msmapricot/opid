@@ -76,6 +76,67 @@
         </tr>
       </table>
     </fieldset>
+     <br /><br /><br />
+    <fieldset>
+        <legend>Mistakenly Resolved</legend>
+    <table style="width:100%;">
+        <tr>
+            <td>Mistakenly Resolved Checks File</td>
+            <td>
+                <input type="file" ng-model="MRUploadedFile" onchange="angular.element(this).scope().setFiles('MR', this);" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="MRUpload();" />
+            </td>
+
+        </tr>
+
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{MRUploadedFile}}</td>
+        </tr>
+
+        <tr><td>&nbsp;</td></tr>
+
+        <tr>
+            <td>Re-Resolve Cleared Checks File</td>
+            <td>
+                <input type="file" ng-model="RRCUploadedFile" onchange="angular.element(this).scope().setFiles('RRC', this);" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="RRCUpload();" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{RRCUploadedFile}}</td>
+        </tr>
+
+        <tr><td>&nbsp;</td></tr>
+
+        <tr>
+            <td>Re-Resolve Voided Checks File</td>
+            <td>
+                <input type="file" ng-model="RRVUploadedFile" onchange="angular.element(this).scope().setFiles('RRV', this);" />
+            </td>
+            <td>
+                <input type="button" value="Upload" ng-click="RRVUpload();" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Uploaded File
+            </td>
+            <td>{{RRVUploadedFile}}</td>
+        </tr>
+    </table>
+    </fieldset>
     <br/><br/><br/>
     <table width="100%">
         <tr>

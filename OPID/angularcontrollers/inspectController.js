@@ -16,6 +16,10 @@ function inspectController($rootScope, $scope, $http, $q, $route, FileManager) {
             FileManager.setSelectedFile("Quickbooks");
             $route.reload();
         }
+        else if (vm.selectedFile == "MistakenlyResolved") {
+            FileManager.setSelectedFile("MistakenlyResolved");
+            $route.reload();
+        }
         else if (vm.selectedFile == "Research") {
             FileManager.setSelectedFile("Research");
             $route.reload();
@@ -29,7 +33,7 @@ function inspectController($rootScope, $scope, $http, $q, $route, FileManager) {
             $route.reload();
         }
         else {
-            alert("FileManager.getQBFileName = " + FileManager.getQBFileName() + " FileManager.getAPFileName() = " + FileManager.getAPFileName());
+            alert("Could not inspect selected file");
         }
     }
 }

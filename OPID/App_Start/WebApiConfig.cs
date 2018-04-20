@@ -34,6 +34,13 @@ namespace MSM
 
             // This route is used by datatableController.js
             config.Routes.MapHttpRoute(
+             name: "GetMRFile",
+             routeTemplate: "api/mrfile",
+                  defaults: new { controller = "Inspect", action = "GetMistakenlyResolvedFile" }
+            );
+
+            // This route is used by datatableController.js
+            config.Routes.MapHttpRoute(
             name: "GetVCFile",
             routeTemplate: "api/vcfile",
                  defaults: new { controller = "Inspect", action="GetVoidedchecksFile"}

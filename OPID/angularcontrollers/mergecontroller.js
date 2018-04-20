@@ -13,6 +13,9 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
             $scope.APUploadedFile = FileManager.getAPFileName() + "." + FileManager.getAPFileType();
             $scope.MDUploadedFile = FileManager.getMDFileName() + "." + FileManager.getMDFileType();
             $scope.QBUploadedFile = FileManager.getQBFileName() + "." + FileManager.getQBFileType();
+            $scope.MRUploadedFile = FileManager.getMRFileName() + "." + FileManager.getMRFileType();
+            $scope.RRCUploadedFile = FileManager.getRRCFileName() + "." + FileManager.getRRCFileType();
+            $scope.RRVUploadedFile = FileManager.getRRVFileName() + "." + FileManager.getRRVFileType();
 
             $scope.VCUpload = function () {
                 var fd = new FormData()
@@ -111,6 +114,165 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                                     }
                                     else {
                                         FileManager.setQBUploadFile(jsonObj.file);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else {
+                    $scope.$apply(function (scpe) {
+                        $scope.UploadStatus = evt.target.responseText;
+                    })
+                }
+            }
+
+            $scope.MRUpload = function () {
+                var fd = new FormData()
+                for (var i in $scope.files) {
+                    // i is an array index
+                    if ($scope.files[i].ftype == 'MR') {
+                        fd.append("uploadedFile", $scope.files[i].file);
+                        fd.append("ftype", "MR");
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.addEventListener("load", MRUploadComplete, false);
+                        xhr.open("POST", server + "api/upload/UploadFile", true);
+                        $scope.progressVisible = true;
+                        xhr.send(fd);
+                    }
+                }
+            }
+
+            function MRUploadComplete(evt) {
+                $scope.progressVisible = false;
+                if (evt.target.status == 201) {
+                    $scope.FilePath = evt.target.responseText;
+
+                    $scope.$apply(function (scpe) {
+                        $scope.MRUploadStatus = "Upload Complete";
+                        for (var i in $scope.files) {
+                            var jsonObj = $scope.files[i];
+                            if (jsonObj.ftype == 'MR' & jsonObj.seen == "false") {
+                                FileManager.getValidFile('MR', jsonObj.file).then(function (v) {
+                                    jsonObj.seen = "true";
+                                    $scope.MRUploadedFile = jsonObj.file.name;  // this includes the extension
+
+                                    // Don't know why have to set variable valid, but does not work otherwise.
+                                    var valid = (v === "true" ? true : false);
+
+                                    if (!valid) {
+                                        $scope.MRUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Mistakenly Resolved Checks File.";
+                                        FileManager.setMRFileName($scope.MRUploadedFile);
+                                    }
+                                    else {
+                                        FileManager.setMRUploadFile(jsonObj.file);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else {
+                    $scope.$apply(function (scpe) {
+                        $scope.UploadStatus = evt.target.responseText;
+                    })
+                }
+            }
+
+            $scope.RRCUpload = function () {
+                var fd = new FormData()
+                for (var i in $scope.files) {
+                    // i is an array index
+                    if ($scope.files[i].ftype == 'RRC') {
+                        fd.append("uploadedFile", $scope.files[i].file);
+                        fd.append("ftype", "RRC");
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.addEventListener("load", RRCUploadComplete, false);
+                        xhr.open("POST", server + "api/upload/UploadFile", true);
+                        $scope.progressVisible = true;
+                        xhr.send(fd);
+                    }
+                }
+            }
+
+            function RRCUploadComplete(evt) {
+                $scope.progressVisible = false;
+                if (evt.target.status == 201) {
+                    $scope.FilePath = evt.target.responseText;
+
+                    $scope.$apply(function (scpe) {
+                        $scope.RRCUploadStatus = "Upload Complete";
+                        for (var i in $scope.files) {
+                            var jsonObj = $scope.files[i];
+                            if (jsonObj.ftype == 'RRC' & jsonObj.seen == "false") {
+                                FileManager.getValidFile('RRC', jsonObj.file).then(function (v) {
+                                    jsonObj.seen = "true";
+                                    $scope.RRCUploadedFile = jsonObj.file.name;  // this includes the extension
+
+                                    // Don't know why have to set variable valid, but does not work otherwise.
+                                    var valid = (v === "true" ? true : false);
+
+                                    if (!valid) {
+                                        $scope.RRCUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Re-Resolve Cleared Checks File.";
+                                        FileManager.setRRCFileName($scope.RRCUploadedFile);
+                                    }
+                                    else {
+                                        FileManager.setRRCUploadFile(jsonObj.file);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else {
+                    $scope.$apply(function (scpe) {
+                        $scope.UploadStatus = evt.target.responseText;
+                    })
+                }
+            }
+
+            $scope.RRVUpload = function () {
+                var fd = new FormData()
+                for (var i in $scope.files) {
+                    // i is an array index
+                    if ($scope.files[i].ftype == 'RRV') {
+                        fd.append("uploadedFile", $scope.files[i].file);
+                        fd.append("ftype", "RRV");
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.addEventListener("load", RRVUploadComplete, false);
+                        xhr.open("POST", server + "api/upload/UploadFile", true);
+                        $scope.progressVisible = true;
+                        xhr.send(fd);
+                    }
+                }
+            }
+
+            function RRVUploadComplete(evt) {
+                $scope.progressVisible = false;
+                if (evt.target.status == 201) {
+                    $scope.FilePath = evt.target.responseText;
+
+                    $scope.$apply(function (scpe) {
+                        $scope.RRVUploadStatus = "Upload Complete";
+                        for (var i in $scope.files) {
+                            var jsonObj = $scope.files[i];
+                            if (jsonObj.ftype == 'RRV' & jsonObj.seen == "false") {
+                                FileManager.getValidFile('RRV', jsonObj.file).then(function (v) {
+                                    jsonObj.seen = "true";
+                                    $scope.RRVUploadedFile = jsonObj.file.name;  // this includes the extension
+
+                                    // Don't know why have to set variable valid, but does not work otherwise.
+                                    var valid = (v === "true" ? true : false);
+
+                                    if (!valid) {
+                                        $scope.RRVUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a Re-Resolve Voided Checks File.";
+                                        FileManager.setRRVFileName($scope.RRVUploadedFile);
+                                    }
+                                    else {
+                                        FileManager.setRRVUploadFile(jsonObj.file);
                                     }
                                 })
                             }
@@ -329,6 +491,36 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                     qbFileType = FileManager.getQBFileType();
                 }
 
+                var mrFileName = FileManager.getMRFileName();
+                var mrFileType;
+
+                if (mrFileName == 'unknown') {
+                    mrFileType = "xlsx";
+                }
+                else {
+                    mrFileType = FileManager.getMRFileType();
+                }
+
+                var rrcFileName = FileManager.getRRCFileName();
+                var rrcFileType;
+
+                if (rrcFileName == 'unknown') {
+                    rrcFileType = "xlsx";
+                }
+                else {
+                    rrcFileType = FileManager.getRRCFileType();
+                }
+
+                var rrvFileName = FileManager.getRRVFileName();
+                var rrvFileType;
+
+                if (rrvFileName == 'unknown') {
+                    rrvFileType = "xlsx";
+                }
+                else {
+                    rrvFileType = FileManager.getRRVFileType();
+                }
+
                 if (apFileName != 'unknown' && mdFileName != 'unknown') {
                     alert("Cannot merge two Research Files at the same time. Please use the browser reload button to reset.")
                 }
@@ -338,9 +530,9 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                 else {
                     $scope.mergeStatus = "Merging...";
 
-                    MergeManager.merge(vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType).then(function (ms) {
+                    MergeManager.merge(vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType, mrFileName, mrFileType, rrcFileName, rrcFileType, rrvFileName, rrvFileType).then(function (ms) {
                         $scope.mergeStatus = "Merge completed";
-                    });
+                  });
                 }
             }
         }

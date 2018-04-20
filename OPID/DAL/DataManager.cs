@@ -140,14 +140,30 @@ namespace MSM.DAL
 
         public static bool IsProtectedCheck(string disposition)
         {
+            if (string.IsNullOrEmpty(disposition))
+            {
+                return false;
+            }
+
             return disposition.Equals("Voided/Replaced")
                 || disposition.Equals("Voided/Reissued")
                 || disposition.Equals("Voided/No Reissue")
                 || disposition.Equals("Voided/Reissue Other");
         }
 
+        public static bool IsMistakenlyResolved(string disposition)
+        {
+            return
+                (disposition.Equals("Mistakenly Resolved"));
+        }
+
         private static bool IsResearchCheck(string disposition)
         {
+            if (string.IsNullOrEmpty(disposition))
+            {
+                return true;  // PLB 4/19/2018 was false;
+            }
+
             return (string.IsNullOrEmpty(disposition)
                 || disposition.Equals("Voided/Replaced")
                 || disposition.Equals("Voided/Reissued")
@@ -276,6 +292,11 @@ namespace MSM.DAL
             AppendToUnresolvedChecks(unmatchedChecks);
         }
 
+        public static void PersistUnresolvedChecks(List<Check> unresolvedChecks)
+        {
+            AppendToUnresolvedChecks(unresolvedChecks);
+        }
+
         private static bool IsTypo(int checkNum)
         {
             var tc = typoChecks.Find(c => c.Num == checkNum);
@@ -349,6 +370,24 @@ namespace MSM.DAL
             }
         }
 
+        public static void MarkReResolvedChecks()
+        {
+            using (OPIDDB opidcontext = new OPIDDB())
+            {
+                var unresolved = opidcontext.UnresolvedChecks;
+
+                foreach (UnresolvedCheck ucheck in unresolved)
+                {
+                    if (IsResolved(ucheck.Num) && !ucheck.Disposition.Equals("Mistakenly Resolved")) 
+                    {
+                        ucheck.Matched = true;
+                    }
+                }
+
+                opidcontext.SaveChanges();
+            }
+        }
+
         public static void MarkTypoChecks()
         {
             using (OPIDDB opidcontext = new OPIDDB())
@@ -406,6 +445,12 @@ namespace MSM.DAL
         public static void RemoveResolvedChecks()
         {
             MarkResolvedChecks();
+            DeleteMarkedChecks();
+        }
+
+        public static void RemoveReResolvedChecks()
+        {
+            MarkReResolvedChecks();
             DeleteMarkedChecks();
         }
 
@@ -1552,6 +1597,24 @@ namespace MSM.DAL
                 }
 
                 return status;
+            }
+        }
+
+        public static void ProcessMistakenlyResolvedChecks(List<Check> mistakenlyResolved)
+        {
+            using (OPIDDB opidcontext = new OPIDDB())
+            {
+                foreach (Check mr in mistakenlyResolved)
+                {
+                    List<UnresolvedCheck> unresolvedChecks = opidcontext.UnresolvedChecks.Where(u => u.Num == mr.Num).ToList();
+
+                    foreach (UnresolvedCheck ucheck in unresolvedChecks)
+                    {
+                        ucheck.Disposition = "Mistakenly Resolved";
+                    }
+                }
+
+                opidcontext.SaveChanges();
             }
         }
 

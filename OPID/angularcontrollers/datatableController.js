@@ -27,6 +27,28 @@
                      DTColumnBuilder.newColumn('Amount').withTitle('Amount')
                  ];
          }
+         else if ($scope.tab == 'inspect' && FileManager.getSelectedFile() == "MistakenlyResolved") {
+             vm.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
+                 var defer = $q.defer();
+                 $http.get(server + "api/mrfile",
+                     { params: { "mrFile": FileManager.getMRFileName(), "fileType": FileManager.getMRFileType() } }).then(function (result) {
+                         defer.resolve(result.data);
+                     });
+                 return defer.promise;
+             }).withPaginationType('full_numbers')
+               .withDisplayLength(10)
+               .withOption('lengthChange', false);
+
+             vm.dtColumns = [
+                     DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
+                         return $filter('date')(data, 'MM/dd/yyyy')
+                     }),
+                     DTColumnBuilder.newColumn('Num').withTitle('Check Number'),
+                     /* DTColumnBuilder.newColumn('Memo').withTitle('Memo'), 
+                     DTColumnBuilder.newColumn('Clr').withTitle('Status'), */
+                     DTColumnBuilder.newColumn('Amount').withTitle('Amount')
+             ];
+         }
          else if ($scope.tab == 'inspect' && FileManager.getSelectedFile() == "Voidedchecks")
          {
              vm.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
@@ -155,7 +177,7 @@
              ];
          }
          else { // If this final "else" clause is removed a controller error will occur. Do not remove!
-             //alert("Load the empty file to avoid a controller error");
+            // alert("Load the empty file to avoid a controller error");
              LoadTheEmptyFile();
          }
 

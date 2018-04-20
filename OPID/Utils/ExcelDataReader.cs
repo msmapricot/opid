@@ -215,14 +215,17 @@ namespace MSM.Utils
         {
             string dvalue;
 
-            if (DBNull.Value.Equals(row["Date of Check"]))  //if (DBNull.Value.Equals(row["Date"]))
+          //  if (DBNull.Value.Equals(row["Date of Check"]))  //if (DBNull.Value.Equals(row["Date"]))
+
+            if (DBNull.Value.Equals(row["Date"]))  // For File1 and File2 read on Mach 30, 2018 
             { 
                 // This is a blank row. Provide a dummy value.
                 dvalue = "12/12/1900";
             }
             else
             {
-                dvalue = row["Date of Check"].ToString();  //dvalue = row["Date"].ToString();
+             //   dvalue = row["Date of Check"].ToString();  //dvalue = row["Date"].ToString();
+                dvalue = row["Date"].ToString();  // For File1 and File2 read on March 30, 2018
             }
 
             DateTime dtime = Convert.ToDateTime(dvalue);
@@ -233,14 +236,16 @@ namespace MSM.Utils
         {
             string cvalue;
 
-            if (DBNull.Value.Equals(row["Check Number"]))  // if (DBNull.Value.Equals(row["Num"]))
+            //if (DBNull.Value.Equals(row["Check Number"]))  // if (DBNull.Value.Equals(row["Num"]))
+            if (DBNull.Value.Equals(row["Num"]))  // For File1 and FIle2 read on March 30, 2018
             {
                 // This is a blank row. Provide a dummy value.
                 cvalue = "0";
             }
             else
             {
-                cvalue = row["Check Number"].ToString();  // cvalue = row["Num"].ToString();
+               // cvalue = row["Check Number"].ToString();  // cvalue = row["Num"].ToString();
+                cvalue = row["Num"].ToString();  // For FIle1 and File2 read on March 30, 2018
                 if (cvalue.Equals("EFT") || cvalue.Equals("Debit"))  // PLB 10/12/2017. Bill's file may have EFT or Debit in Num field. Treat as blank line.
                 {
                     cvalue = "0";
@@ -298,7 +303,8 @@ namespace MSM.Utils
             }
             */
 
-            svalue = row["Amount of Check"].ToString();  //svalue = row["Amount"].ToString();
+           // svalue = row["Amount of Check"].ToString();  //svalue = row["Amount"].ToString();
+            svalue = row["Amount"].ToString(); // For File1 and File2 read on March 30, 2018
             return svalue;
         }
 

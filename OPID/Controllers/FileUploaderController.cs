@@ -69,6 +69,12 @@ namespace MSM.Controllers
                     return ValidateMDFile(fpath);
                 case "QB":
                     return ValidateQBFile(fpath);
+                case "MR":
+                    return ValidateMRFile(fpath);
+                case "RRC":
+                    return ValidateRRCFile(fpath);
+                case "RRV":
+                    return ValidateRRVFile(fpath);
                 case "RT":  // Research Table
                     return ValidateRTFile(fpath);
                 default:
@@ -158,6 +164,77 @@ namespace MSM.Controllers
 
                 //   valid = clr == 0;
                 valid = true;
+            }
+            catch
+            {
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        private bool ValidateMRFile(string fpath)
+        {
+            bool valid = true;
+
+            try
+            {
+                var checks = ExcelDataReader.GetQuickbooksChecks(fpath);
+
+                //  var clr = checks.Count(c => c.Clr.Equals("Unknown"));
+
+                //   var clr = 0;  // PLB 1/19/17 If column Clr has no value it is not an error!
+
+                //   valid = clr == 0;
+                valid = true;
+            }
+            catch
+            {
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        private bool ValidateRRCFile(string fpath)
+        {
+            bool valid = true;
+
+            try
+            {
+                var checks = ExcelDataReader.GetQuickbooksChecks(fpath);
+
+                //  var clr = checks.Count(c => c.Clr.Equals("Unknown"));
+
+                //   var clr = 0;  // PLB 1/19/17 If column Clr has no value it is not an error!
+
+                //   valid = clr == 0;
+                valid = true;
+            }
+            catch
+            {
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        private bool ValidateRRVFile(string fpath)
+        {
+            bool valid = true;
+
+            try
+            {
+                var checks = ExcelDataReader.GetVoidedChecks(fpath);
+
+                var clr = (from c in checks
+                           where (string.IsNullOrEmpty(c.Clr))
+                           select c).FirstOrDefault();
+
+                if (clr == null)
+                {
+                    valid = false;
+                }
             }
             catch
             {

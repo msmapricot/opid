@@ -32,6 +32,11 @@ namespace MSM.Controllers
             return DataManager.GetQuickbooksChecks(qbFile, fileType);
         }
 
+        public List<Check> GetMistakenlyResolvedFile(string mrFile, string fileType)
+        {
+            return DataManager.GetQuickbooksChecks(mrFile, fileType);
+        }
+
         [HttpGet]
         // This method is used to return the Voided Checks file for inspection on the Inspect tab.
         public List<Check> GetVoidedchecksFile(string vcFile, string fileType)
