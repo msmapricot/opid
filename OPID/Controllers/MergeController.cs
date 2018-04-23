@@ -59,17 +59,17 @@ namespace MSM.Controllers
                 {
                     foreach (Check matchedCheck in matchedChecks)
                     {
-                        bool mistakenlyResolved = DataManager.IsMistakenlyResolved(matchedCheck.Disposition);
+                        bool newMistakenlyResolved = DataManager.IsNewMistakenlyResolved(matchedCheck);
                         bool protectedCheck = DataManager.IsProtectedCheck(matchedCheck.Disposition);
 
                         if (!protectedCheck)
                         {
-                            if (mistakenlyResolved)
+                            if (newMistakenlyResolved)
                             {
                                 // This will "unset" the radio button from Cleared, Voided, etc. to no setting at all.
                                 DataManager.NewResolvedCheck(matchedCheck, "");
                             }
-                            else
+                            else if (!DataManager.IsMistakenlyResolved(matchedCheck))
                             {
                                 DataManager.NewResolvedCheck(matchedCheck, type);
                             }

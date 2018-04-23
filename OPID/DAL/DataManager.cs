@@ -17,6 +17,7 @@ namespace MSM.DAL
 
         private static List<Check> unmatchedChecks;
         private static List<Check> resolvedChecks;
+        private static List<int> mistakenlyResolved; 
         private static List<Check> typoChecks;
 
         public static void Init()
@@ -25,6 +26,7 @@ namespace MSM.DAL
             {
                 typoChecks = new List<Check>();
                 resolvedChecks = new List<Check>();
+                mistakenlyResolved = new List<int>();
                 firstCall = false;
             }
 
@@ -151,10 +153,22 @@ namespace MSM.DAL
                 || disposition.Equals("Voided/Reissue Other");
         }
 
-        public static bool IsMistakenlyResolved(string disposition)
+        public static bool IsNewMistakenlyResolved(Check check)
         {
-            return
-                (disposition.Equals("Mistakenly Resolved"));
+            if (mistakenlyResolved.Contains(check.Num))
+            {
+                return false;
+            }
+            else
+            {
+                mistakenlyResolved.Add(check.Num);
+                return check.Disposition.Equals("Mistakenly Resolved");
+            }
+        }
+
+        public static bool IsMistakenlyResolved(Check check)
+        {
+            return check.Disposition.Equals("Mistakenly Resolved");
         }
 
         private static bool IsResearchCheck(string disposition)
@@ -378,6 +392,8 @@ namespace MSM.DAL
 
                 foreach (UnresolvedCheck ucheck in unresolved)
                 {
+                    // Must leave the Mistakenly Resolved checks in the Research Table so they
+                    // can be removed later by the "normal" process of resolving checks.
                     if (IsResolved(ucheck.Num) && !ucheck.Disposition.Equals("Mistakenly Resolved")) 
                     {
                         ucheck.Matched = true;
