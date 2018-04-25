@@ -1593,6 +1593,30 @@ namespace MSM.DAL
         {
             string status;
 
+            using (OPIDDB opidcontext = new OPIDDB())
+            {
+                var ucheck = opidcontext.UnresolvedChecks.Where(u => u.Num == checkNum).FirstOrDefault();
+
+                if (ucheck == null)
+                {
+                    status = string.Format("<p>Could not find check with number {0} in research table.<p>", checkNum);
+                }
+                else
+                {
+                    opidcontext.UnresolvedChecks.Remove(ucheck);
+                    opidcontext.SaveChanges();
+                    status = string.Format("<p>Removed from research table:<br/>&nbsp;&nbsp;&nbsp;Date: {0}<br/>&nbsp;&nbsp;&nbsp;Record ID: {1}<br/>&nbsp;&nbsp;&nbsp;Interview Record ID: {2}<br/>&nbsp;&nbsp;&nbsp;Name: {3}<br/>&nbsp;&nbsp;&nbsp;Check number: {4}<br/>&nbsp;&nbsp;&nbsp;Service: {5}</p>", ucheck.Date.ToString("d"), ucheck.RecordID, ucheck.InterviewRecordID, ucheck.Name, ucheck.Num, ucheck.Service);
+                }
+
+                return status;
+            }
+        }
+
+        /*
+        public static string ResolveCheck(int checkNum)
+        {
+            string status;
+
             using (var dbCtx = new MSMEntities())
             {
                 var unresolved = dbCtx.Set<ResearchCheck>();
@@ -1615,6 +1639,7 @@ namespace MSM.DAL
                 return status;
             }
         }
+        */
 
         public static void ProcessMistakenlyResolvedChecks(List<Check> mistakenlyResolved)
         {
