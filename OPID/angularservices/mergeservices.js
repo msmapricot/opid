@@ -1,7 +1,7 @@
 ﻿
 MergeServices.factory('MergeManager', ['$http', function ($http) {
 
-    var merge = function (vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType, mrFileName, mrFileType, rrcFileName, rrcFileType, rrvFileName, rrvFileType) {
+    var merge = function (vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType, imFileName, imFileType, mrFileName, mrFileType, rrcFileName, rrcFileType, rrvFileName, rrvFileType) {
         return $http.get(server + "api/merge",
             {
                 params:
@@ -14,6 +14,8 @@ MergeServices.factory('MergeManager', ['$http', function ($http) {
                        "mdFileType": mdFileType,
                        "qbFileName": qbFileName,
                        "qbFileType": qbFileType,
+                       "imFileName": imFileName,
+                       "imFileType": imFileType,
                        "mrFileName": mrFileName,
                        "mrFileType": mrFileType,
                        "rrcFileName": rrcFileName,

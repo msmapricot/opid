@@ -82,6 +82,7 @@ namespace MSM.DAL
             {
                 // Implicit status of voided checks is "Voided"
                 check.Clr = "Voided";
+                check.Disposition = "Voided";
             }
 
             /*
@@ -95,6 +96,21 @@ namespace MSM.DAL
             */
 
             return voidedChecks;
+        }
+
+        public static List<Check> GetImportMeChecks(string imFileName, string imFileType)
+        {
+            if (imFileName.Equals("unknown"))
+            {
+                // Return an emmpty list of checks.
+                return new List<Check>();
+            }
+
+            string pathToImportMeChecksFile = System.Web.HttpContext.Current.Request.MapPath(string.Format("~/Uploads/{0}.{1}", imFileName, imFileType));
+
+            List<Check> importMeChecks = ExcelDataReader.GetImportMeChecks(pathToImportMeChecksFile);
+
+            return importMeChecks;
         }
 
         public static List<Check> GetQuickbooksChecks(string qbFileName, string qbFileType)
@@ -173,6 +189,8 @@ namespace MSM.DAL
 
         private static bool IsResearchCheck(string disposition)
         {
+            return true;  // PLB 12/14/18 Make every check a research check.
+            /*
             if (string.IsNullOrEmpty(disposition))
             {
                 return true;  // PLB 4/19/2018 was false;
@@ -183,6 +201,7 @@ namespace MSM.DAL
                 || disposition.Equals("Voided/Reissued")
                 || disposition.Equals("Voided/No Reissue")
                 || disposition.Equals("Voided/Reissue Other"));
+            */
         } 
         private static List<Check> DetermineUnmatchedChecks(List<DispositionRow> researchRows)
         {
@@ -384,6 +403,8 @@ namespace MSM.DAL
             }
         }
 
+      
+
         public static void MarkReResolvedChecks()
         {
             using (OPIDDB opidcontext = new OPIDDB())
@@ -468,6 +489,26 @@ namespace MSM.DAL
         {
             MarkReResolvedChecks();
             DeleteMarkedChecks();
+        }
+
+        public static void ResolveUnresolvedChecks()
+        {
+            using (OPIDDB opidcontext = new OPIDDB())
+            {
+                var unresolved = opidcontext.UnresolvedChecks;
+
+                foreach (Check check in resolvedChecks)
+                {
+                    List<UnresolvedCheck> uchecks = unresolved.Where(u => u.Num == check.Num || u.Num == -check.Num).ToList();
+
+                    foreach (UnresolvedCheck ucheck in uchecks)
+                    {
+                        ucheck.Disposition = check.Disposition;
+                    }
+                }
+
+                opidcontext.SaveChanges();
+            }
         }
 
         private static void ResolveIncidentalLBVD(MSM.Models.DataRow row, List<Check> researchChecks, bool findTypos)
@@ -891,6 +932,22 @@ namespace MSM.DAL
             }
         }
 
+        /*
+        public static void RecoverLostChecks(Check check, List<Check> researchChecks)
+        {
+           // string check = check.Disposition;
+            IEnumerable<Check> lostChecks = researchChecks.FindAll(r => r.InterviewRecordID == check.InterviewRecordID && check.Service.StartsWith(r.Service) && r.Disposition != string.Empty).OrderBy(r => r.Date);
+ 
+            foreach (Check lostCheck in lostChecks)
+            {
+                if (lostCheck.Num != check.Num)
+                {
+                    NewResolvedCheck(lostCheck, lostCheck.Disposition);
+                }
+            }
+        }
+        */
+
         public static string GetDispositionFromCheck(Check check)
         {
             switch (check.Clr)
@@ -921,8 +978,14 @@ namespace MSM.DAL
 
         public static void NewResolvedCheck(Check check, string disposition)
         {
-            check.Clr = disposition;
-            resolvedChecks.Add(check);
+            Check alreadyResolved = resolvedChecks.Where(r => r.Num == check.Num || r.Num == -check.Num).FirstOrDefault();
+
+            if (alreadyResolved == null)
+            {
+                check.Clr = disposition;
+                check.Disposition = disposition;
+                resolvedChecks.Add(check);
+            }
         }
 
         private static void CreateTypoRootCheck(MSM.Models.DataRow row, int checkNum, string service, string disposition)
@@ -1171,6 +1234,7 @@ namespace MSM.DAL
         // Called only by FileDownloaderController.DownloadImportMe
         public static List<ImportRow> GetImportRows()
         {
+            List<Check> researchChecks = GetUnresolvedChecks();
             List<ImportRow> importRows = new List<ImportRow>();
 
             // Each resolved check creates a new import row or updates an existing one.
@@ -1206,7 +1270,7 @@ namespace MSM.DAL
                     {
                         // There is no import row representing this resolved check.
                         // Create one.
-                        importRows.Add(NewImportRow(resolvedCheck, disposition));
+                        importRows.Add(NewImportRow(researchChecks, resolvedCheck, disposition));
                     }
                     else
                     {
@@ -1227,7 +1291,7 @@ namespace MSM.DAL
                                 // birth certificates.
                                 if (!added)
                                 {
-                                    importRows.Add(NewImportRow(resolvedCheck, disposition));
+                                    importRows.Add(NewImportRow(researchChecks, resolvedCheck, disposition));
                                     // Prevent the same resolved check from being added twice.
                                     added = true;
                                 }
@@ -1247,39 +1311,90 @@ namespace MSM.DAL
             return importRows;
         }
 
-        private static ImportRow NewImportRow(Check resolvedCheck, string disposition)
+        private static void PopulateImportRow(Check resolvedCheck, ImportRow importRow)
+        {
+            switch (resolvedCheck.Service)
+            {
+                case "LBVD":
+                    importRow.LBVDCheckNum = resolvedCheck.Num;
+                    importRow.LBVDCheckDisposition = resolvedCheck.Disposition;
+                    break;
+                case "LBVD2":
+                    importRow.LBVDCheckNum2 = resolvedCheck.Num;
+                    importRow.LBVDCheck2Disposition = resolvedCheck.Disposition;
+                    break;
+                case "LBVD3":
+                    importRow.LBVDCheckNum2 = resolvedCheck.Num;
+                    importRow.LBVDCheck3Disposition = resolvedCheck.Disposition;
+                    break;
+
+                case "TID":
+                    importRow.TIDCheckNum = resolvedCheck.Num;
+                    importRow.TIDCheckDisposition = resolvedCheck.Disposition;
+                    break;
+                case "TID2":
+                    importRow.TIDCheckNum2 = resolvedCheck.Num;
+                    importRow.TIDCheck2Disposition = resolvedCheck.Disposition;
+                    break;
+                case "TID3":
+                    importRow.TIDCheckNum3 = resolvedCheck.Num;
+                    importRow.TIDCheck3Disposition = resolvedCheck.Disposition;
+                    break;
+
+                case "TDL":
+                    importRow.TDLCheckNum = resolvedCheck.Num;
+                    importRow.TDLCheckDisposition = resolvedCheck.Disposition;
+                    break;
+                case "TDL2":
+                    importRow.TDLCheckNum2 = resolvedCheck.Num;
+                    importRow.TDLCheck2Disposition = resolvedCheck.Disposition;
+                    break;
+                case "TDL3":
+                    importRow.TDLCheckNum3 = resolvedCheck.Num;
+                    importRow.TDLCheck3Disposition = resolvedCheck.Disposition;
+                    break;
+
+                case "MBVD":
+                    importRow.MBVDCheckNum = resolvedCheck.Num;
+                    importRow.MBVDCheckDisposition = resolvedCheck.Disposition;
+                    break;
+                case "MBVD2":
+                    importRow.MBVDCheckNum2 = resolvedCheck.Num;
+                    importRow.MBVDCheck2Disposition = resolvedCheck.Disposition;
+                    break;
+                case "MBVD3":
+                    importRow.MBVDCheckNum2 = resolvedCheck.Num;
+                    importRow.MBVDCheck3Disposition = resolvedCheck.Disposition;
+                    break;
+
+                case "SD":
+                    importRow.SDCheckNum = resolvedCheck.Num;
+                    importRow.SDCheckDisposition = resolvedCheck.Disposition;
+                    break;
+            }
+        }
+
+        private static void PrepopulateImportRow(List<Check> researchChecks, ImportRow importRow)
+        {
+            List<Check> rChecks = researchChecks.FindAll(r => r.RecordID == importRow.RecordID && r.InterviewRecordID == importRow.InterviewRecordID).ToList();
+
+            foreach (Check resolvedCheck in rChecks)
+            {
+                PopulateImportRow(resolvedCheck, importRow);
+            }
+        }
+
+        private static ImportRow NewImportRow(List<Check> researchChecks, Check resolvedCheck, string disposition)
         {
             ImportRow importRow = new ImportRow
             {
                 RecordID = resolvedCheck.RecordID,
-                InterviewRecordID = resolvedCheck.InterviewRecordID,
-                LBVDCheckNum = (resolvedCheck.Service.Equals("LBVD") ? resolvedCheck.Num : 0),
-                LBVDCheckDisposition = (resolvedCheck.Service.Equals("LBVD") ? disposition : ""),
-                LBVDCheckNum2 = (resolvedCheck.Service.Equals("LBVD2") ? resolvedCheck.Num : 0),
-                LBVDCheck2Disposition = (resolvedCheck.Service.Equals("LBVD2") ? disposition : ""),
-                LBVDCheckNum3 = (resolvedCheck.Service.Equals("LBVD3") ? resolvedCheck.Num : 0),
-                LBVDCheck3Disposition = (resolvedCheck.Service.Equals("LBVD3") ? disposition : ""),
-                TIDCheckNum = (resolvedCheck.Service.Equals("TID") ? resolvedCheck.Num : 0),
-                TIDCheckDisposition = (resolvedCheck.Service.Equals("TID") ? disposition : ""),
-                TIDCheckNum2 = (resolvedCheck.Service.Equals("TID2") ? resolvedCheck.Num : 0),
-                TIDCheck2Disposition = (resolvedCheck.Service.Equals("TID2") ? disposition : ""),
-                TIDCheckNum3 = (resolvedCheck.Service.Equals("TID3") ? resolvedCheck.Num : 0),
-                TIDCheck3Disposition = (resolvedCheck.Service.Equals("TID3") ? disposition : ""),
-                TDLCheckNum = (resolvedCheck.Service.Equals("TDL") ? resolvedCheck.Num : 0),
-                TDLCheckDisposition = (resolvedCheck.Service.Equals("TDL") ? disposition : ""),
-                TDLCheckNum2 = (resolvedCheck.Service.Equals("TDL2") ? resolvedCheck.Num : 0),
-                TDLCheck2Disposition = (resolvedCheck.Service.Equals("TDL2") ? disposition : ""),
-                TDLCheckNum3 = (resolvedCheck.Service.Equals("TDL3") ? resolvedCheck.Num : 0),
-                TDLCheck3Disposition = (resolvedCheck.Service.Equals("TDL3") ? disposition : ""),
-                MBVDCheckNum = (resolvedCheck.Service.Equals("MBVD") ? resolvedCheck.Num : 0),
-                MBVDCheckDisposition = (resolvedCheck.Service.Equals("MBVD") ? disposition : ""),
-                MBVDCheckNum2 = (resolvedCheck.Service.Equals("MBVD2") ? resolvedCheck.Num : 0),
-                MBVDCheck2Disposition = (resolvedCheck.Service.Equals("MBVD2") ? disposition : ""),
-                MBVDCheckNum3 = (resolvedCheck.Service.Equals("MBVD3") ? resolvedCheck.Num : 0),
-                MBVDCheck3Disposition = (resolvedCheck.Service.Equals("MBVD3") ? disposition : ""),
-                SDCheckNum = (resolvedCheck.Service.Equals("SD") ? resolvedCheck.Num : 0),
-                SDCheckDisposition = (resolvedCheck.Service.Equals("SD") ? disposition : "")
+                InterviewRecordID = resolvedCheck.InterviewRecordID
             };
+
+            PrepopulateImportRow(researchChecks, importRow);
+
+            PopulateImportRow(resolvedCheck, importRow);
 
             return importRow;
         }
@@ -1308,6 +1423,7 @@ namespace MSM.DAL
         public static List<ImportRow> GetStaleRows(List<Check> staleChecks)
         {
             List<ImportRow> importRows = new List<ImportRow>();
+            List<Check> researchChecks = GetResearchChecks();
 
             // Each stale check creates a new import row or updates an existing one.
             foreach (Check staleCheck in staleChecks)
@@ -1330,7 +1446,7 @@ namespace MSM.DAL
                 {
                     // There is no import row representing this resolved check.
                     // Create one.
-                    importRows.Add(NewImportRow(staleCheck, "Stale Check"));
+                    importRows.Add(NewImportRow(researchChecks, staleCheck, "Stale Check"));
                 }
                 else
                 {
@@ -1348,7 +1464,7 @@ namespace MSM.DAL
                             // birth certificates.
                             if (!added)
                             {
-                                importRows.Add(NewImportRow(staleCheck, "Stale Check"));
+                                importRows.Add(NewImportRow(researchChecks, staleCheck, "Stale Check"));
                                 // Prevent the same resolved check from being added twice.
                                 added = true;
                             }
@@ -1559,7 +1675,8 @@ namespace MSM.DAL
             }
             catch (Exception e)
             {
-                 
+                int z;
+                z = 2;
             }
         }
 

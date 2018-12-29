@@ -13,6 +13,7 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
             $scope.APUploadedFile = FileManager.getAPFileName() + "." + FileManager.getAPFileType();
             $scope.MDUploadedFile = FileManager.getMDFileName() + "." + FileManager.getMDFileType();
             $scope.QBUploadedFile = FileManager.getQBFileName() + "." + FileManager.getQBFileType();
+            $scope.IMUploadedFile = FileManager.getIMFileName() + "." + FileManager.getIMFileType();
             $scope.MRUploadedFile = FileManager.getMRFileName() + "." + FileManager.getMRFileType();
             $scope.RRCUploadedFile = FileManager.getRRCFileName() + "." + FileManager.getRRCFileType();
             $scope.RRVUploadedFile = FileManager.getRRVFileName() + "." + FileManager.getRRVFileType();
@@ -114,6 +115,59 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                                     }
                                     else {
                                         FileManager.setQBUploadFile(jsonObj.file);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+                else {
+                    $scope.$apply(function (scpe) {
+                        $scope.UploadStatus = evt.target.responseText;
+                    })
+                }
+            }
+
+            $scope.IMUpload = function () {
+                var fd = new FormData()
+                for (var i in $scope.files) {
+                    // i is an array index
+                    if ($scope.files[i].ftype == 'IM') {
+                        fd.append("uploadedFile", $scope.files[i].file);
+                        fd.append("ftype", "IM");
+
+                        var xhr = new XMLHttpRequest();
+                        xhr.addEventListener("load", IMUploadComplete, false);
+                        xhr.open("POST", server + "api/upload/UploadFile", true);
+                        $scope.progressVisible = true;
+                        xhr.send(fd);
+                    }
+                }
+            }
+
+            function IMUploadComplete(evt) {
+                $scope.progressVisible = false;
+                if (evt.target.status == 201) {
+                    $scope.FilePath = evt.target.responseText;
+
+                    $scope.$apply(function (scpe) {
+                        $scope.IMUploadStatus = "Upload Complete";
+                        for (var i in $scope.files) {
+                            var jsonObj = $scope.files[i];
+                            if (jsonObj.ftype == 'IM' & jsonObj.seen == "false") {
+                                FileManager.getValidFile('IM', jsonObj.file).then(function (v) {
+                                    jsonObj.seen = "true";
+                                    $scope.IMUploadedFile = jsonObj.file.name;  // this includes the extension
+
+                                    // Don't know why have to set variable valid, but does not work otherwise.
+                                    var valid = (v === "true" ? true : false);
+
+                                    if (!valid) {
+                                        $scope.IMUploadedFile = "Bad format. " + jsonObj.file.name + " does not look like a ImportMe File.";
+                                        FileManager.setIMFileName($scope.IMUploadedFile);
+                                    }
+                                    else {
+                                        FileManager.setIMUploadFile(jsonObj.file);
                                     }
                                 })
                             }
@@ -491,6 +545,16 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                     qbFileType = FileManager.getQBFileType();
                 }
 
+                var imFileName = FileManager.getIMFileName();
+                var imFileType;
+
+                if (imFileName == 'unknown') {
+                    imFileType = "xlsx";
+                }
+                else {
+                    imFileType = FileManager.getIMFileType();
+                }
+
                 var mrFileName = FileManager.getMRFileName();
                 var mrFileType;
 
@@ -524,13 +588,13 @@ MSMApp.controller('mergeController', ['$rootScope', '$scope', '$http', 'FileMana
                 if (apFileName != 'unknown' && mdFileName != 'unknown') {
                     alert("Cannot merge two Research Files at the same time. Please use the browser reload button to reset.")
                 }
-                else if (apFileName != 'unknown' && (vcFileName != 'unknown' || qbFileName != 'unknown')) {
+                else if (apFileName != 'unknown' && (vcFileName != 'unknown' || qbFileName != 'unknown' || imFileName != 'unknown')) {
                     alert("Cannot merge both a Research File and a Disposition File at the same time. Please use the browser reload button to reset.")
                 }
                 else {
                     $scope.mergeStatus = "Merging...";
 
-                    MergeManager.merge(vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType, mrFileName, mrFileType, rrcFileName, rrcFileType, rrvFileName, rrvFileType).then(function (ms) {
+                    MergeManager.merge(vcFileName, vcFileType, apFileName, apFileType, mdFileName, mdFileType, qbFileName, qbFileType, imFileName, imFileType, mrFileName, mrFileType, rrcFileName, rrcFileType, rrvFileName, rrvFileType).then(function (ms) {
                         $scope.mergeStatus = "Merge completed";
                   });
                 }

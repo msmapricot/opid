@@ -32,11 +32,18 @@ namespace MSM.Controllers
                 {
                     foreach (Check matchedCheck in matchedChecks)
                     {       
-                        bool protectedCheck = DataManager.IsProtectedCheck(matchedCheck.Disposition);
+                        bool protectedCheck = (type.Equals("ImportMe") ? false : DataManager.IsProtectedCheck(matchedCheck.Disposition));
+
+                        string disposition = (type.Equals("ImportMe") ? check.Disposition : type);
 
                         if (!protectedCheck)
                         {
-                            DataManager.NewResolvedCheck(matchedCheck, type);
+                            DataManager.NewResolvedCheck(matchedCheck, disposition);
+                        }
+
+                        if (type.Equals("ImportMe"))
+                        {
+                           // DataManager.RecoverLostChecks(check, researchChecks);
                         }
                     }
                 }
@@ -107,9 +114,10 @@ namespace MSM.Controllers
             // then the check for Jason Estes will resolve the check for Mark Justice.
             // We don't want this to happen! Most likely, the check number 74726
             // for Mark Justice was a typo.
-            DataManager.HandleIncidentalChecks(researchRows);
+            // PLB 12/14/2018 DataManager.HandleIncidentalChecks(researchRows);
             DataManager.PersistUnmatchedChecks(researchRows);
-            DataManager.RemoveTypoChecks();
+            //  PLB 12/14/2018 Don't call RemoveTypoChecks
+            // DataManager.RemoveTypoChecks();
         }
 
         // The user specified only a Modifications Research File. Use this file to update the 
@@ -127,19 +135,23 @@ namespace MSM.Controllers
 
         // The user did not specify a Research File on the merge screen. The user is trying
         // to resolve some checks currently in research.
-        private static void ResolveResearchChecks(string vcFileName, string vcFileType, string qbFileName, string qbFileType)
+        private static void ResolveResearchChecks(string vcFileName, string vcFileType, string qbFileName, string qbFileType, string imFileName, string imFileType)
         {
             DataManager.Init();
 
             List<Check> researchChecks = DataManager.GetUnresolvedChecks();
             List<Check> qbChecks = DataManager.GetQuickbooksChecks(qbFileName, qbFileType);
             List<Check> voidedChecks = DataManager.GetVoidedChecks(vcFileName, vcFileType);
- 
+            List<Check> importMeChecks = DataManager.GetImportMeChecks(imFileName, imFileType);
+
             DetermineResolvedChecks(qbChecks, "Cleared", researchChecks);
             DetermineResolvedChecks(voidedChecks, "Voided", researchChecks);
+            DetermineResolvedChecks(importMeChecks, "ImportMe", researchChecks);
 
             // Remove the set of resolved checks determined above from the Research Table. 
-            DataManager.RemoveResolvedChecks();
+            // PLB 12/14/2018  DataManager.RemoveResolvedChecks();
+            // PLB 12/17/2018 Use resolvedChecks to resolve checks in Research Table that are currently unresolved.
+            DataManager.ResolveUnresolvedChecks();
         }
 
         private static void ReResolveResearchChecks(string rrcFileName, string rrcFileType, string rrvFileName, string rrvFileType)
@@ -166,17 +178,17 @@ namespace MSM.Controllers
 
 
         [HttpGet]
-        public void PerformMerge(string vcFileName, string vcFileType, string apFileName, string apFileType, string mdFileName, string mdFileType, string qbFileName, string qbFileType, string mrFileName, string mrFileType, string rrcFileName, string rrcFileType, string rrvFileName, string rrvFileType)
+        public void PerformMerge(string vcFileName, string vcFileType, string apFileName, string apFileType, string imFileName, string imFileType, string mdFileName, string mdFileType, string qbFileName, string qbFileType, string mrFileName, string mrFileType, string rrcFileName, string rrcFileType, string rrvFileName, string rrvFileType)
         {
             if (apFileName.Equals("unknown") && mdFileName.Equals("unknown"))
             {
-                if (!vcFileName.Equals("unknown") || !qbFileName.Equals("unknown"))
+                if (!vcFileName.Equals("unknown") || !qbFileName.Equals("unknown") || !imFileName.Equals("unknown"))
                 {
                     // The user did not specify an Interview Research File or a Modifications Research File 
                     // on the merge screen. 
                     // The user is trying to resolve some research checks in the Research Table
                     // by inputting either a Cleared Checks file or a Voided Checks file.
-                    ResolveResearchChecks(vcFileName, vcFileType, qbFileName, qbFileType);
+                    ResolveResearchChecks(vcFileName, vcFileType, qbFileName, qbFileType, imFileName, imFileType);
                 }
                 else if (!mrFileName.Equals("unknown"))
                 {

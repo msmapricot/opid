@@ -22,6 +22,21 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         menuFiles.push({type: ftype, file: fileName});
     }
 
+    /*
+    var setQBUploadFile = function (fileObj) {
+        var fparts = fileObj.name.split(".");
+        var fname = fparts[0];
+        var ftype = fparts[1];
+        var qbUploaded = uploadedFiles.qbFileName;
+
+        if (qbUploaded == undefined || qbUploaded != fname) {
+            uploadedFiles.qbFileName = fname;
+            uploadedFiles.qbFileType = ftype;
+            addToMenuFiles("Quickbooks", fname, ftype);
+        }
+    }
+    */
+
     var setQBUploadFile = function (fileObj) {
         var fparts = fileObj.name.split(".");
         var fname = fparts[0];
@@ -57,18 +72,40 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         return uploadedFiles.qbFileType;
     }
 
-    var setQBUploadFile = function (fileObj) {
+    // ImportMe
+    var setIMUploadFile = function (fileObj) {
         var fparts = fileObj.name.split(".");
         var fname = fparts[0];
         var ftype = fparts[1];
-        var qbUploaded = uploadedFiles.qbFileName;
+        var imUploaded = uploadedFiles.imFileName;
 
-        if (qbUploaded == undefined || qbUploaded != fname) {
-            uploadedFiles.qbFileName = fname;
-            uploadedFiles.qbFileType = ftype;
-            addToMenuFiles("Quickbooks", fname, ftype);
+        if (imUploaded == undefined || imUploaded != fname) {
+            uploadedFiles.imFileName = fname;
+            uploadedFiles.imFileType = ftype;
+            addToMenuFiles("ImportMe", fname, ftype);
         }
     }
+
+    var getIMFileName = function () {
+        if (uploadedFiles.imFileName == undefined) {
+            return "unknown";
+        }
+
+        return uploadedFiles.imFileName;
+    }
+
+    var setIMFileName = function (name) {
+        uploadedFiles.imFileName = name;
+    }
+
+    var getIMFileType = function () {
+        if (uploadedFiles.imFileType == undefined) {
+            return "";
+        }
+
+        return uploadedFiles.imFileType;
+    }
+   
 
     // Mistakenly resolved 
     var getMRFileName = function () {
@@ -357,6 +394,11 @@ FileServices.factory('FileManager', ['$http', function ($http) {
         setQBFileName: setQBFileName,
         getQBFileType: getQBFileType,
         setQBUploadFile: setQBUploadFile,
+
+        getIMFileName: getIMFileName,
+        setIMFileName: setIMFileName,
+        getIMFileType: getIMFileType,
+        setIMUploadFile: setIMUploadFile,
 
         getMRFileName: getMRFileName,
         setMRFileName: setMRFileName,

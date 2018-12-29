@@ -69,6 +69,8 @@ namespace MSM.Controllers
                     return ValidateMDFile(fpath);
                 case "QB":
                     return ValidateQBFile(fpath);
+                case "IM":
+                    return true;
                 case "MR":
                     return ValidateMRFile(fpath);
                 case "RRC":

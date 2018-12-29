@@ -16,6 +16,10 @@ function inspectController($rootScope, $scope, $http, $q, $route, FileManager) {
             FileManager.setSelectedFile("Quickbooks");
             $route.reload();
         }
+        else if (vm.selectedFile == "ImportMe") {
+            FileManager.setSelectedFile("ImportMe");
+            $route.reload();
+        }
         else if (vm.selectedFile == "MistakenlyResolved") {
             FileManager.setSelectedFile("MistakenlyResolved");
             $route.reload();

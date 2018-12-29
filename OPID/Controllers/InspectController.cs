@@ -32,6 +32,11 @@ namespace MSM.Controllers
             return DataManager.GetQuickbooksChecks(qbFile, fileType);
         }
 
+        public List<Check> GetImportMeFile(string imFile, string fileType)
+        {
+            return DataManager.GetImportMeChecks(imFile, fileType);
+        }
+
         public List<Check> GetMistakenlyResolvedFile(string mrFile, string fileType)
         {
             return DataManager.GetQuickbooksChecks(mrFile, fileType);

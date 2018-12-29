@@ -27,6 +27,28 @@
                      DTColumnBuilder.newColumn('Amount').withTitle('Amount')
                  ];
          }
+         else if ($scope.tab == 'inspect' && FileManager.getSelectedFile() == "ImportMe") {
+             vm.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
+                 var defer = $q.defer();
+                 $http.get(server + "api/imfile",
+                     { params: { "imFile": FileManager.getIMFileName(), "fileType": FileManager.getIMFileType() } }).then(function (result) {
+                         defer.resolve(result.data);
+                     });
+                 return defer.promise;
+             }).withPaginationType('full_numbers')
+               .withDisplayLength(10)
+               .withOption('lengthChange', false);
+
+             vm.dtColumns = [
+                     DTColumnBuilder.newColumn('Date').withTitle('Date').renderWith(function (data, type) {
+                         return $filter('date')(data, 'MM/dd/yyyy')
+                     }),
+                     DTColumnBuilder.newColumn('RID').withTitle('Record ID')
+                     /* DTColumnBuilder.newColumn('Memo').withTitle('Memo'), 
+                     DTColumnBuilder.newColumn('Clr').withTitle('Status'), 
+                     DTColumnBuilder.newColumn('Amount').withTitle('Amount') */
+             ];
+         }
          else if ($scope.tab == 'inspect' && FileManager.getSelectedFile() == "MistakenlyResolved") {
              vm.dtOptions = DTOptionsBuilder.fromFnPromise(function () {
                  var defer = $q.defer();
